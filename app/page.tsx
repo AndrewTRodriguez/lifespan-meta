@@ -108,10 +108,32 @@ export default async function DashboardPage() {
           Probing Claude&apos;s reasoning about gene effects on lifespan
         </p>
         <p className="mt-1 text-[13px]" style={{ color: 'var(--color-text-tertiary)' }}>
-          by Andrew T. Rodriguez, Ph.D.
+          by{' '}
+          <Link
+            href="https://andrewtrodriguez.github.io/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:opacity-70"
+            style={{ color: 'var(--color-primary)' }}
+          >
+            Andrew T. Rodriguez, Ph.D.
+          </Link>
         </p>
         <p className="mt-1 text-[12px]" style={{ color: 'var(--color-text-tertiary)' }}>
-          {run.model} · {agg.total_entries.toLocaleString()} entries · run {completedDate}
+          Evaluating {run.model} · {agg.total_entries.toLocaleString()} entries · run {completedDate}
+        </p>
+      </section>
+
+      {/* Intro paragraph */}
+      <section className="mb-8">
+        <p className="text-[15px] leading-[1.6]" style={{ color: 'var(--color-text)' }}>
+          A 1,379-gene evaluation of Claude Sonnet 4.6&apos;s ability to predict whether an
+          aging gene promotes or opposes longevity, given only the gene&apos;s molecular
+          function. The model reaches 45% accuracy on a 3-class task — but the more revealing
+          finding is a directional bias: it identifies pro-longevity genes 73% of the time and
+          anti-longevity genes only 30% of the time, often inverting the label even when its
+          own reasoning arrives at the correct mechanism. Each per-entry page shows the prompt,
+          the model&apos;s reasoning, the GenAge ground truth, and an LLM-graded judgment.
         </p>
       </section>
 

@@ -68,11 +68,8 @@ export default function OGImage() {
               gap: 12,
             }}
           >
-            <div style={{ color: '#0F172A', fontSize: 22, fontWeight: 600 }}>
-              Claude Sonnet 4.6
-            </div>
             <div style={{ color: '#475569', fontSize: 18, lineHeight: 1.4 }}>
-              Gene-function reasoning on 1,379 entries from the GenAge model organisms database
+              Evaluating Claude Sonnet 4.6 · 1,379 entries from the GenAge model organisms database
             </div>
           </div>
           <div style={{ color: '#64748B', fontSize: 18 }}>
