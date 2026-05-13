@@ -2,3 +2,7 @@
 node_modules/
 data/raw/
 data/processed/
+.next/
+.DS_Store
+*.DS_Store
+.vercel

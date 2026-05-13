@@ -55,3 +55,51 @@ export interface AdvisorOutput {
   notes: string;
   ground_truth_questionable: boolean;
 }
+
+// --- UI / query types ---
+
+export interface ClassBreakdown {
+  n: number;
+  accuracy: number;
+}
+
+export interface CalibrationBucket {
+  confidence_bin: string;
+  n: number;
+  accuracy: number;
+}
+
+export interface RunAggregates {
+  aggregated_at: string;
+  total_entries: number;
+  main_accuracy: number;
+  counterfactual_accuracy: number;
+  contamination_gap_pp: number;
+  mechanism_accuracy_main: number;
+  advisor_kappa_vs_expert: number | null;
+  failure_mode_counts: Partial<Record<FailureMode, number>>;
+  calibration_buckets: CalibrationBucket[];
+  class_breakdown_main: Partial<Record<LongevityInfluence, ClassBreakdown>>;
+}
+
+export interface RunRow {
+  id: number;
+  model: string;
+  completed_at: string | null;
+  is_primary: boolean;
+  aggregates: RunAggregates | null;
+}
+
+export interface ResultRow {
+  run_id: number;
+  entry_id: number;
+  split: Split;
+  prompt_sent: string;
+  solver: SolverOutput;
+  advisor: AdvisorOutput;
+  api_latency_ms: number | null;
+}
+
+export interface EntryWithResult extends Entry {
+  result_main: ResultRow | null;
+}
