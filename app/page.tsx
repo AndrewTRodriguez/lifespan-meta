@@ -5,7 +5,7 @@ import type { RunRow, FailureMode, LongevityInfluence } from '@/lib/types';
 import { MetricCard } from '@/components/MetricCard';
 import { FailureModeBar } from '@/components/FailureModeBar';
 import { NOTABLE_ENTRY_IDS } from '@/lib/notable';
-import { formatPercentInt, displayLongevity, longevityInfluenceColor, displayOrganism } from '@/lib/format-display';
+import { formatPercentInt, displayLongevity, longevityInfluenceColor, displayOrganism, formatGeneSymbol } from '@/lib/format-display';
 
 export const revalidate = 3600;
 
@@ -256,12 +256,12 @@ export default async function DashboardPage() {
                 borderTop: i > 0 ? '0.5px solid var(--color-border)' : undefined,
               }}
             >
-              <span
+              <em
                 className="font-mono text-[15px] font-medium"
                 style={{ color: 'var(--color-primary)' }}
               >
-                {entry.symbol}
-              </span>
+                {formatGeneSymbol(entry.symbol, entry.organism)}
+              </em>
               <em className="text-[13px]" style={{ color: 'var(--color-text-secondary)' }}>
                 {displayOrganism(entry.organism)}
               </em>

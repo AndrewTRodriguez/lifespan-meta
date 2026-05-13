@@ -80,6 +80,24 @@ export function displayMechanism(value: MechanismClass): string {
   return HALLMARKS[value]?.displayName ?? value;
 }
 
+// --- Gene symbol formatting ---
+
+export function formatGeneSymbol(symbol: string, organism: string): string {
+  if (!symbol) return symbol;
+  switch (organism) {
+    case 'Caenorhabditis elegans':
+    case 'Drosophila melanogaster':
+    case 'Schizosaccharomyces pombe':
+      return symbol.toLowerCase();
+    case 'Saccharomyces cerevisiae':
+      return symbol.toUpperCase();
+    case 'Mus musculus':
+      return symbol.charAt(0).toUpperCase() + symbol.slice(1).toLowerCase();
+    default:
+      return symbol;
+  }
+}
+
 // --- Organism abbreviations ---
 
 const ORGANISM_ABBREV: Record<string, string> = {

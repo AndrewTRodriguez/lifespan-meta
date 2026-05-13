@@ -10,7 +10,7 @@ import {
   FailureModeFilterPills,
   ClearFiltersLink,
 } from '@/components/FilterPills';
-import { displayFailureMode, displayOrganism } from '@/lib/format-display';
+import { displayFailureMode, displayOrganism, formatGeneSymbol } from '@/lib/format-display';
 
 export const metadata: Metadata = {
   title: 'Browse entries',
@@ -225,12 +225,12 @@ export default async function EntryListPage({
                 className="flex items-center gap-2 px-4 py-3 transition-colors hover:bg-[var(--color-bg-subtle)]"
                 style={{ borderTop: i > 0 ? '0.5px solid var(--color-border)' : undefined }}
               >
-                <span
+                <em
                   className="font-mono text-[14px] font-medium shrink-0"
                   style={{ color: 'var(--color-primary)', minWidth: 'max-content' }}
                 >
-                  {entry.symbol}
-                </span>
+                  {formatGeneSymbol(entry.symbol, entry.organism)}
+                </em>
                 <span className="text-[13px] shrink-0 select-none" style={{ color: 'var(--color-text-tertiary)' }}>·</span>
                 <em
                   className="text-[13px] shrink-0"

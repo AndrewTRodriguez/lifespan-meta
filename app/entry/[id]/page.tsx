@@ -9,7 +9,7 @@ import { ConfidenceBar } from '@/components/ConfidenceBar';
 import { ReasoningDots } from '@/components/ReasoningDots';
 import { Collapsible } from '@/components/Collapsible';
 import { SplitTabs } from '@/components/SplitTabs';
-import { displayMechanism, displayLongevity, displayOrganism } from '@/lib/format-display';
+import { displayMechanism, displayLongevity, displayOrganism, formatGeneSymbol } from '@/lib/format-display';
 
 export const revalidate = 3600;
 export const dynamicParams = false;
@@ -276,7 +276,10 @@ export default async function EntryPage({
           className="font-mono text-[28px] font-semibold leading-tight"
           style={{ color: 'var(--color-text)' }}
         >
-          {entry.symbol || <span style={{ color: 'var(--color-text-tertiary)' }}>(unnamed)</span>}
+          {entry.symbol
+            ? <em>{formatGeneSymbol(entry.symbol, entry.organism)}</em>
+            : <span style={{ color: 'var(--color-text-tertiary)' }}>(unnamed)</span>
+          }
         </h1>
         <p className="mt-1 text-[20px]" style={{ color: 'var(--color-text-secondary)' }}>
           <em>{displayOrganism(entry.organism)}</em>
