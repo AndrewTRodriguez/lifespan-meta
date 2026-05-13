@@ -82,8 +82,16 @@ export function displayMechanism(value: MechanismClass): string {
 
 // --- Gene symbol formatting ---
 
+function isMixedCase(s: string): boolean {
+  const letters = s.replace(/[^a-zA-Z]/g, '');
+  return letters.length > 0
+    && letters !== letters.toLowerCase()
+    && letters !== letters.toUpperCase();
+}
+
 export function formatGeneSymbol(symbol: string, organism: string): string {
   if (!symbol) return symbol;
+  if (isMixedCase(symbol)) return symbol;
   switch (organism) {
     case 'Caenorhabditis elegans':
     case 'Drosophila melanogaster':
