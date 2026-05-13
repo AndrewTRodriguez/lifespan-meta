@@ -72,7 +72,7 @@ export default function OGImage() {
               Claude Sonnet 4.6
             </div>
             <div style={{ color: '#475569', fontSize: 18, lineHeight: 1.4 }}>
-              Gene-function reasoning on 1,385 entries from the GenAge model organisms database
+              Gene-function reasoning on 1,379 entries from the GenAge model organisms database
             </div>
           </div>
           <div style={{ color: '#64748B', fontSize: 18 }}>

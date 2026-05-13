@@ -14,7 +14,7 @@ import { displayFailureMode, displayOrganism } from '@/lib/format-display';
 
 export const metadata: Metadata = {
   title: 'Browse entries',
-  description: 'Browse and filter all 1,385 gene entries evaluated in the aging biology eval. Filter by hallmark of aging or failure mode.',
+  description: 'Browse and filter all 1,379 gene entries evaluated in the aging biology eval. Filter by hallmark of aging or failure mode.',
 };
 
 const PAGE_SIZE = 50;
