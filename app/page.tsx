@@ -191,7 +191,7 @@ export default async function DashboardPage() {
 
       {/* Caveat note */}
       <p className="mb-8 text-[13px] italic" style={{ color: 'var(--color-text-tertiary)' }}>
-        Counterfactual split blinds the gene symbol but not the protein name.{' '}
+        Counterfactual split blinds the gene symbol but not the protein&apos;s functional description (e.g., &ldquo;Insulin-like receptor subunit beta&rdquo; still identifies <em>daf-2</em>).{' '}
         <Link
           href="/methodology#blinding"
           className="underline hover:opacity-70"

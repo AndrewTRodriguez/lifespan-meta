@@ -208,8 +208,8 @@ export default async function MethodologyPage() {
           <li>
             <strong>Counterfactual split.</strong> The gene symbol is replaced with the placeholder{' '}
             <code className="font-mono text-[13px]">GENE-X</code>. Everything else — including
-            the organism name and the full functional annotation (protein names and Gene Ontology
-            Molecular Function terms) — is identical to the main split.{' '}
+            the organism name, the protein&apos;s descriptive name, and Gene Ontology Molecular
+            Function terms — is identical to the main split.{' '}
             <Link href="#blinding" style={{ color: 'var(--color-primary)' }} className="underline hover:opacity-70">
               See the Limitations section
             </Link>{' '}
@@ -509,20 +509,23 @@ export default async function MethodologyPage() {
           <li id="blinding" className="scroll-mt-16">
             <strong>Counterfactual blinding is incomplete.</strong> The counterfactual split
             replaces the gene symbol with{' '}
-            <code className="font-mono text-[13px]">GENE-X</code> but preserves the full
-            functional annotation, including protein names. For well-characterized genes whose
-            protein names are themselves identifying (for example, &ldquo;Insulin-like receptor
-            subunit beta&rdquo; in <em>C. elegans</em> unambiguously identifies{' '}
-            <code className="font-mono text-[13px]">daf-2</code>), this provides
-            only partial blinding. The small main-vs-counterfactual accuracy gap reflects this
-            limitation more than the model&apos;s underlying reasoning capability. A more
-            rigorous future version of this eval would strip protein names from the redacted
-            input as well, leaving only Gene Ontology Molecular Function terms. The eval remains
-            useful as a test of the model&apos;s biological reasoning even where blinding is
-            imperfect: the model still has to articulate a mechanism, identify the correct
-            pathway, and arrive at the correct longevity influence. Readers can inspect the
-            reasoning on each per-entry page and judge whether it reflects genuine biology or
-            pattern-matching.
+            <code className="font-mono text-[13px]">GENE-X</code> but preserves the rest of the
+            functional annotation, including the protein&apos;s descriptive name (e.g.,
+            &ldquo;Insulin-like receptor subunit beta&rdquo;) and its Gene Ontology Molecular
+            Function terms. The gene symbol{' '}
+            <code className="font-mono text-[13px]">daf-2</code> and the protein symbol{' '}
+            <code className="font-mono text-[13px]">DAF-2</code> are both blinded, but the
+            descriptive name &ldquo;Insulin-like receptor subunit beta&rdquo; combined with the
+            organism &ldquo;Caenorhabditis elegans&rdquo; uniquely identifies the gene. For
+            well-characterized genes, this means blinding is only partial. The small
+            main-vs-counterfactual accuracy gap reflects this limitation more than the
+            model&apos;s underlying reasoning capability. A more rigorous future version of this
+            eval would strip protein descriptive names from the redacted input as well, leaving
+            only Gene Ontology Molecular Function terms. The eval remains useful as a test of the
+            model&apos;s biological reasoning even where blinding is imperfect: the model still
+            has to articulate a mechanism, identify the correct pathway, and arrive at the correct
+            longevity influence. Readers can inspect the reasoning on each per-entry page and
+            judge whether it reflects genuine biology or pattern-matching.
           </li>
           <li>
             <strong>Model organisms only.</strong> The dataset covers the model organisms in
