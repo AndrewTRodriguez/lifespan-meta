@@ -80,6 +80,21 @@ export function displayMechanism(value: MechanismClass): string {
   return HALLMARKS[value]?.displayName ?? value;
 }
 
+// --- Organism abbreviations ---
+
+const ORGANISM_ABBREV: Record<string, string> = {
+  'Caenorhabditis elegans': 'C. elegans',
+  'Saccharomyces cerevisiae': 'S. cerevisiae',
+  'Drosophila melanogaster': 'D. melanogaster',
+  'Mus musculus': 'M. musculus',
+  'Schizosaccharomyces pombe': 'S. pombe',
+  'Podospora anserina': 'P. anserina',
+};
+
+export function displayOrganism(full: string): string {
+  return ORGANISM_ABBREV[full] ?? full;
+}
+
 // --- Formatting ---
 
 export function formatPercent(value: number, decimals = 1): string {

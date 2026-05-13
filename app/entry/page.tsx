@@ -10,7 +10,7 @@ import {
   FailureModeFilterPills,
   ClearFiltersLink,
 } from '@/components/FilterPills';
-import { displayFailureMode } from '@/lib/format-display';
+import { displayFailureMode, displayOrganism } from '@/lib/format-display';
 
 export const metadata: Metadata = {
   title: 'Browse entries',
@@ -49,6 +49,7 @@ async function queryEntries(
        AND r.run_id = (SELECT id FROM runs WHERE is_primary = TRUE LIMIT 1)
        AND r.split = 'main'
       WHERE e.longevity_influence IN ('pro_longevity', 'anti_longevity', 'unclear')
+        AND e.symbol IS NOT NULL AND e.symbol != ''
         AND (${mechanism}::text IS NULL OR r.solver->>'mechanism_class' = ${mechanism})
         AND (${failureMode}::text IS NULL OR r.advisor->>'failure_mode' = ${failureMode})
       ORDER BY e.symbol ASC, e.id ASC
@@ -62,6 +63,7 @@ async function queryEntries(
        AND r.run_id = (SELECT id FROM runs WHERE is_primary = TRUE LIMIT 1)
        AND r.split = 'main'
       WHERE e.longevity_influence IN ('pro_longevity', 'anti_longevity', 'unclear')
+        AND e.symbol IS NOT NULL AND e.symbol != ''
         AND (${mechanism}::text IS NULL OR r.solver->>'mechanism_class' = ${mechanism})
         AND (${failureMode}::text IS NULL OR r.advisor->>'failure_mode' = ${failureMode})
     `,
@@ -224,17 +226,17 @@ export default async function EntryListPage({
                 style={{ borderTop: i > 0 ? '0.5px solid var(--color-border)' : undefined }}
               >
                 <span
-                  className="font-mono text-[14px] font-medium w-28 shrink-0 truncate"
-                  style={{ color: 'var(--color-primary)' }}
+                  className="font-mono text-[14px] font-medium shrink-0"
+                  style={{ color: 'var(--color-primary)', minWidth: 'max-content' }}
                 >
-                  {entry.symbol || <span style={{ color: 'var(--color-text-tertiary)' }}>(unnamed)</span>}
+                  {entry.symbol}
                 </span>
-                <span
+                <em
                   className="text-[13px] flex-1 min-w-0 truncate"
                   style={{ color: 'var(--color-text-secondary)' }}
                 >
-                  {entry.organism}
-                </span>
+                  {displayOrganism(entry.organism)}
+                </em>
                 <div className="flex items-center gap-1.5 shrink-0">
                   {entry.predicted_longevity_influence && (
                     <>

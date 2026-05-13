@@ -5,7 +5,7 @@ import type { RunRow, FailureMode, LongevityInfluence } from '@/lib/types';
 import { MetricCard } from '@/components/MetricCard';
 import { FailureModeBar } from '@/components/FailureModeBar';
 import { NOTABLE_ENTRY_IDS } from '@/lib/notable';
-import { formatPercentInt, displayLongevity, longevityInfluenceColor } from '@/lib/format-display';
+import { formatPercentInt, displayLongevity, longevityInfluenceColor, displayOrganism } from '@/lib/format-display';
 
 export const revalidate = 3600;
 
@@ -20,6 +20,13 @@ interface NotableEntry {
   organism: string;
 }
 
+interface ClassBreakdownRow {
+  ground_truth: LongevityInfluence;
+  n: string;
+  correct: string;
+  pct: string;
+}
+
 async function getPrimaryRun(): Promise<RunRow | undefined> {
   const rows = (await sql`
     SELECT id, model, completed_at, is_primary, aggregates
@@ -28,6 +35,22 @@ async function getPrimaryRun(): Promise<RunRow | undefined> {
     LIMIT 1
   `) as unknown as RunRow[];
   return rows[0];
+}
+
+async function getClassBreakdown(): Promise<ClassBreakdownRow[]> {
+  const rows = await sql`
+    SELECT
+      e.longevity_influence AS ground_truth,
+      COUNT(*) AS n,
+      SUM(CASE WHEN (r.advisor->>'answer_correct')::boolean THEN 1 ELSE 0 END) AS correct,
+      ROUND(100.0 * SUM(CASE WHEN (r.advisor->>'answer_correct')::boolean THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct
+    FROM results r
+    JOIN entries e ON e.id = r.entry_id
+    WHERE r.run_id = (SELECT id FROM runs WHERE is_primary = TRUE LIMIT 1)
+      AND r.split = 'main'
+    GROUP BY e.longevity_influence
+  `;
+  return rows as unknown as ClassBreakdownRow[];
 }
 
 async function getNotableEntries(): Promise<NotableEntry[]> {
@@ -42,9 +65,10 @@ async function getNotableEntries(): Promise<NotableEntry[]> {
 }
 
 export default async function DashboardPage() {
-  const [run, notableEntries] = await Promise.all([
+  const [run, notableEntries, classBreakdown] = await Promise.all([
     getPrimaryRun(),
     getNotableEntries(),
+    getClassBreakdown(),
   ]);
 
   if (!run?.aggregates) {
@@ -91,40 +115,40 @@ export default async function DashboardPage() {
         </p>
       </section>
 
-      {/* Contamination gap callout */}
-      <section className="mb-8">
+      {/* Hero */}
+      <section className="mb-6">
         <div className="rounded-xl p-6" style={{ backgroundColor: 'var(--color-primary-tint)' }}>
           <div
-            className="font-semibold leading-none mb-2"
+            className="font-semibold leading-none mb-1"
             style={{ fontSize: 48, color: 'var(--color-primary-dark)' }}
           >
-            −{agg.contamination_gap_pp} pp
+            {formatPercentInt(agg.main_accuracy)}
           </div>
           <p className="text-[13px] mb-3" style={{ color: 'var(--color-text-secondary)' }}>
-            Accuracy drop when the gene symbol is blinded
+            Main split accuracy
           </p>
-          <p className="text-[15px] max-w-2xl" style={{ color: 'var(--color-text)' }}>
-            The difference between accuracy on the main split — where the model sees the real
-            gene symbol — and the counterfactual split — where the symbol is replaced with{' '}
-            <code className="font-mono text-[13px]">GENE-X</code> — measures how much of the
-            model&apos;s apparent capability comes from recognizing names vs. reasoning about
-            biology.
+          <p className="text-[15px]" style={{ color: 'var(--color-text)' }}>
+            3-class longevity influence prediction across {agg.total_entries.toLocaleString()} aging genes.
+            Cohen&apos;s κ = {agg.advisor_kappa_vs_expert != null
+              ? agg.advisor_kappa_vs_expert.toFixed(2)
+              : '—'} vs. expert hand-grading.
           </p>
         </div>
       </section>
 
       {/* Metric cards */}
-      <section className="mb-8">
+      <section className="mb-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <MetricCard
-            label="Main split accuracy"
-            value={formatPercentInt(agg.main_accuracy)}
-            footnote="Gene symbol visible"
-          />
           <MetricCard
             label="Counterfactual accuracy"
             value={formatPercentInt(agg.counterfactual_accuracy)}
             footnote="Gene symbol blinded"
+          />
+          <MetricCard
+            label="Contamination gap"
+            value={`−${agg.contamination_gap_pp} pp`}
+            footnote="See methodology →"
+            footnoteHref="/methodology#blinding"
           />
           <MetricCard
             label="Mechanism accuracy"
@@ -141,6 +165,18 @@ export default async function DashboardPage() {
         </div>
       </section>
 
+      {/* Caveat note */}
+      <p className="mb-8 text-[13px] italic" style={{ color: 'var(--color-text-tertiary)' }}>
+        Counterfactual split blinds the gene symbol but not the protein name.{' '}
+        <Link
+          href="/methodology#blinding"
+          className="underline hover:opacity-70"
+          style={{ color: 'var(--color-primary)' }}
+        >
+          See methodology →
+        </Link>
+      </p>
+
       {/* Failure mode breakdown */}
       <section className="mb-8">
         <h2 className="text-[20px] font-semibold mb-4" style={{ color: 'var(--color-text)' }}>
@@ -156,15 +192,15 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      {/* Per-class accuracy strip */}
+      {/* Per-class recall strip */}
       <section className="mb-8">
         <h2 className="text-[20px] font-semibold mb-3" style={{ color: 'var(--color-text)' }}>
           Accuracy by class
         </h2>
         <div className="flex flex-wrap gap-3">
           {classOrder.map(cls => {
-            const data = agg.class_breakdown_main[cls];
-            if (!data) return null;
+            const row = classBreakdown.find(r => r.ground_truth === cls);
+            if (!row) return null;
             const colors = longevityInfluenceColor(cls);
             return (
               <div
@@ -173,7 +209,7 @@ export default async function DashboardPage() {
                 style={{ backgroundColor: colors.bg, color: colors.text }}
               >
                 <span className="font-medium">{displayLongevity(cls)}</span>
-                <span>{formatPercentInt(data.accuracy)} ({data.n.toLocaleString()})</span>
+                <span>{row.pct}% ({Number(row.n).toLocaleString()})</span>
               </div>
             );
           })}
@@ -204,9 +240,9 @@ export default async function DashboardPage() {
               >
                 {entry.symbol}
               </span>
-              <span className="text-[13px]" style={{ color: 'var(--color-text-secondary)' }}>
-                {entry.organism}
-              </span>
+              <em className="text-[13px]" style={{ color: 'var(--color-text-secondary)' }}>
+                {displayOrganism(entry.organism)}
+              </em>
             </Link>
           ))}
         </div>

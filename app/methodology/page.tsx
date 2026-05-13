@@ -382,8 +382,14 @@ export default async function MethodologyPage() {
       </Section>
 
       {/* 8. Limitations */}
-      <Section id="limitations">
-        <H2>Limitations</H2>
+      <section id="limitations" className="mb-10">
+        <h2
+          id="limitations"
+          className="text-[20px] font-semibold mb-3 mt-0"
+          style={{ color: 'var(--color-text)' }}
+        >
+          Limitations
+        </h2>
         <ul
           className="list-disc list-outside ml-5 space-y-3 text-[15px] leading-[1.6]"
           style={{ color: 'var(--color-text)' }}
@@ -411,18 +417,28 @@ export default async function MethodologyPage() {
             context-dependent roles. Many aging genes participate in multiple hallmarks;
             the mechanism accuracy metric reflects this constraint.
           </li>
-          <li>
-            <strong>Counterfactual blinding is incomplete.</strong> Replacing the gene symbol
-            with <code className="font-mono text-[13px]">GENE-X</code> removes the most obvious
-            identifier, but subtle phrasing in functional descriptions may still convey
-            organism-specific or pathway-specific information that partially identifies the gene.
+          <li id="blinding" className="scroll-mt-16">
+            <strong>Counterfactual blinding is incomplete.</strong> The counterfactual split
+            replaces the gene symbol with GENE-X but preserves the full functional annotation,
+            including protein names. For well-characterized genes whose protein names are
+            themselves identifying (for example, &ldquo;Insulin-like receptor subunit
+            beta&rdquo; in <em>C. elegans</em> unambiguously identifies daf-2), this provides
+            only partial blinding. The small main-vs-counterfactual accuracy gap reflects this
+            limitation more than the model&apos;s underlying reasoning capability. A more
+            rigorous future version of this eval would strip protein names from the redacted
+            input as well, leaving only Gene Ontology Molecular Function terms. The eval remains
+            useful as a test of the model&apos;s biological reasoning even where blinding is
+            imperfect: the model still has to articulate a mechanism, identify the correct
+            pathway, and arrive at the correct longevity influence. Readers can inspect the
+            reasoning on each per-entry page and judge whether it reflects genuine biology or
+            pattern-matching.
           </li>
           <li>
             <strong>Model organisms only.</strong> The dataset covers the model organisms in
             GenAge. Human longevity genes are not included in this eval.
           </li>
         </ul>
-      </Section>
+      </section>
 
       {/* 9. Citation */}
       <Section id="citation">
