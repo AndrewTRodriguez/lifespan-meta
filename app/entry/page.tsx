@@ -222,7 +222,7 @@ export default async function EntryListPage({
               <Link
                 key={entry.id}
                 href={entryUrl(entry.id, mechanism, failureMode)}
-                className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-[var(--color-bg-subtle)]"
+                className="flex items-center gap-2 px-4 py-3 transition-colors hover:bg-[var(--color-bg-subtle)]"
                 style={{ borderTop: i > 0 ? '0.5px solid var(--color-border)' : undefined }}
               >
                 <span
@@ -231,12 +231,14 @@ export default async function EntryListPage({
                 >
                   {entry.symbol}
                 </span>
+                <span className="text-[13px] shrink-0 select-none" style={{ color: 'var(--color-text-tertiary)' }}>·</span>
                 <em
-                  className="text-[13px] flex-1 min-w-0 truncate"
+                  className="text-[13px] shrink-0"
                   style={{ color: 'var(--color-text-secondary)' }}
                 >
                   {displayOrganism(entry.organism)}
                 </em>
+                <span className="flex-1" />
                 <div className="flex items-center gap-1.5 shrink-0">
                   {entry.predicted_longevity_influence && (
                     <>
@@ -247,7 +249,12 @@ export default async function EntryListPage({
                     </>
                   )}
                   <LongevityBadge value={entry.longevity_influence} />
-                  {entry.failure_mode && <FailureModeBadge value={entry.failure_mode} />}
+                  {entry.failure_mode && (
+                    <>
+                      <span className="text-[12px] px-0.5 select-none" style={{ color: 'var(--color-text-tertiary)' }}>·</span>
+                      <FailureModeBadge value={entry.failure_mode} />
+                    </>
+                  )}
                 </div>
               </Link>
             ))}

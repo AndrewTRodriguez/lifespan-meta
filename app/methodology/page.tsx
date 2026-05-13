@@ -381,7 +381,48 @@ export default async function MethodologyPage() {
         )}
       </Section>
 
-      {/* 8. Limitations */}
+      {/* 8. Directional bias */}
+      <Section id="directional-bias">
+        <H2>Directional bias and label-inversion failures</H2>
+        <P>
+          The model shows a strong directional bias: pro-longevity recall is 73% but
+          anti-longevity recall is only 30%, despite anti-longevity being the larger class
+          (878 vs. 481 entries). Closer inspection of the misclassifications reveals a specific
+          failure mode the eval&apos;s seven-class taxonomy doesn&apos;t cleanly capture: the
+          model&apos;s reasoning text correctly describes the gene&apos;s role, but the final
+          structured prediction inverts the label.
+        </P>
+        <P>
+          Approximately 45 entries (~3% of main-split results) show this pattern. Many are
+          textbook anti-longevity genes —{' '}
+          <em>C. elegans</em>{' '}
+          <code className="font-mono text-[13px]">atp-2</code>,{' '}
+          <code className="font-mono text-[13px]">clk-1</code>,{' '}
+          <code className="font-mono text-[13px]">mrpl-1</code>,{' '}
+          <code className="font-mono text-[13px]">eat-2</code>;{' '}
+          <em>Drosophila</em>{' '}
+          <code className="font-mono text-[13px]">chico</code>;{' '}
+          mouse <code className="font-mono text-[13px]">Ghrhr</code> — where the model&apos;s
+          reasoning correctly states that the gene&apos;s normal activity opposes longevity
+          (because reducing it extends lifespan), but the prediction field outputs{' '}
+          <code className="font-mono text-[13px]">pro_longevity</code>. The advisor&apos;s
+          grading reflected this ambiguity inconsistently: some inversions were classified as{' '}
+          <code className="font-mono text-[13px]">confident_wrong</code>, others as{' '}
+          <code className="font-mono text-[13px]">right_answer_wrong_reasoning</code>, though
+          strictly speaking neither fits.
+        </P>
+        <P>
+          The pattern suggests the model is confused about the GenAge label convention — that
+          &ldquo;Anti-Longevity&rdquo; describes the gene&apos;s normal-function role, not the
+          direction of any particular manipulation — rather than the underlying biology. A future
+          iteration of this eval should add a dedicated{' '}
+          <code className="font-mono text-[13px]">reasoning_contradicts_prediction</code> failure
+          mode and may want to test whether explicit label-convention examples in the system
+          prompt reduce the inversion rate.
+        </P>
+      </Section>
+
+      {/* 9. Limitations */}
       <section id="limitations" className="mb-10">
         <h2
           id="limitations"
@@ -419,10 +460,12 @@ export default async function MethodologyPage() {
           </li>
           <li id="blinding" className="scroll-mt-16">
             <strong>Counterfactual blinding is incomplete.</strong> The counterfactual split
-            replaces the gene symbol with GENE-X but preserves the full functional annotation,
-            including protein names. For well-characterized genes whose protein names are
-            themselves identifying (for example, &ldquo;Insulin-like receptor subunit
-            beta&rdquo; in <em>C. elegans</em> unambiguously identifies daf-2), this provides
+            replaces the gene symbol with{' '}
+            <code className="font-mono text-[13px]">GENE-X</code> but preserves the full
+            functional annotation, including protein names. For well-characterized genes whose
+            protein names are themselves identifying (for example, &ldquo;Insulin-like receptor
+            subunit beta&rdquo; in <em>C. elegans</em> unambiguously identifies{' '}
+            <code className="font-mono text-[13px]">daf-2</code>), this provides
             only partial blinding. The small main-vs-counterfactual accuracy gap reflects this
             limitation more than the model&apos;s underlying reasoning capability. A more
             rigorous future version of this eval would strip protein names from the redacted
@@ -440,7 +483,7 @@ export default async function MethodologyPage() {
         </ul>
       </section>
 
-      {/* 9. Citation */}
+      {/* 10. Citation */}
       <Section id="citation">
         <H2>Citation</H2>
         <div
