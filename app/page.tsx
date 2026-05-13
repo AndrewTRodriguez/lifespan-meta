@@ -240,9 +240,16 @@ export default async function DashboardPage() {
 
       {/* Notable entries */}
       <section>
-        <h2 className="text-[20px] font-semibold mb-3" style={{ color: 'var(--color-text)' }}>
+        <h2 className="text-[20px] font-semibold mb-2" style={{ color: 'var(--color-text)' }}>
           Notable entries
         </h2>
+        <p className="text-[14px] leading-[1.6] mb-3" style={{ color: 'var(--color-text-secondary)' }}>
+          Seven entries spanning GenAge&apos;s four model organisms, mixing textbook correct
+          cases on canonical aging genes (<em>daf-2</em>, <em>age-1</em>, <em>foxo</em>,{' '}
+          <em>TOR1</em>) with examples of failure modes the eval surfaces — label inversions
+          (<em>chico</em>, <em>Ghrhr</em>) and a confident commitment against a
+          curator-assigned unclear ground truth (<em>SIR2</em>).
+        </p>
         <div
           className="rounded-lg overflow-hidden"
           style={{ border: '0.5px solid var(--color-border)' }}

@@ -1,9 +1,10 @@
-// Well-known longevity genes to feature on the dashboard.
-// Mapped from GenAge model organisms DB:
-//   daf-2 (id 120) — C. elegans insulin/IGF-1 receptor, canonical lifespan gene
-//   sir-2.1 (id 483) — C. elegans sirtuin, NAD-dependent deacetylase
-//   clk-1 (id 97)  — C. elegans mitochondrial enzyme, clk-1 mutants live longer
-//   age-1 (id 7)   — C. elegans PI3K catalytic subunit, first aging gene cloned
-//   foxo (id 201)  — Drosophila FOXO transcription factor (ortholog of human FOXO3)
-//                    Note: FOXO3 is a human gene not in GenAge model organisms.
-export const NOTABLE_ENTRY_IDS: number[] = [120, 483, 97, 7, 201];
+// Notable entries featured on the dashboard.
+// Species-grouped: worm pair → fly pair → yeast pair → mouse.
+//   daf-2  (id 120) — C. elegans insulin/IGF-1 receptor, canonical pro-longevity
+//   age-1  (id   7) — C. elegans PI3K catalytic subunit, first aging gene cloned
+//   foxo   (id 201) — Drosophila FOXO transcription factor; textbook correct
+//   chico  (id  91) — Drosophila IRS ortholog; label-inversion failure mode
+//   TOR1   (id 548) — S. cerevisiae TOR kinase; textbook correct
+//   SIR2   (id 485) — S. cerevisiae sirtuin; confident commit against unclear GT
+//   Ghrhr  (id 216) — M. musculus GH-releasing hormone receptor; label inversion
+export const NOTABLE_ENTRY_IDS: number[] = [120, 7, 201, 91, 548, 485, 216];
