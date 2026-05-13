@@ -306,16 +306,43 @@ export default async function MethodologyPage() {
         <H2>Data pipeline</H2>
         <P>
           The eval dataset starts from the{' '}
-          <strong>GenAge model organisms database</strong>, which catalogs genes with known
-          effects on lifespan across model organisms (C. elegans, D. melanogaster, S. cerevisiae,
-          and M. musculus). The downloaded CSV contained 2,202 entries.
+          <a
+            href="https://genomics.senescence.info/genes/models.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:opacity-70"
+            style={{ color: 'var(--color-primary)' }}
+          >
+            <strong>GenAge model organisms database</strong>
+          </a>, which catalogs genes with known effects on lifespan across model organisms
+          (<em>C. elegans</em>, <em>D. melanogaster</em>, <em>S. cerevisiae</em>, and{' '}
+          <em>M. musculus</em>). The CSV was downloaded on{' '}
+          <span style={{ color: 'var(--color-warning)' }}>[date TK — confirm with Andrew]</span>{' '}
+          and contained 2,202 entries.
         </P>
         <P>
           For each entry, per-gene functional annotations were fetched from{' '}
-          <strong>NCBI Gene via E-utilities</strong>: the official full name, protein names, and
-          Gene Ontology Molecular Function (GO MF) terms. GO Biological Process terms and
-          RefSeq summaries were deliberately excluded because they frequently contain
-          lifespan-related language that would leak the answer to the model.
+          <a
+            href="https://www.ncbi.nlm.nih.gov/books/NBK25501/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:opacity-70"
+            style={{ color: 'var(--color-primary)' }}
+          >
+            <strong>NCBI Gene via E-utilities</strong>
+          </a>: the official full name, protein names, and{' '}
+          <a
+            href="http://geneontology.org/docs/ontology-documentation/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:opacity-70"
+            style={{ color: 'var(--color-primary)' }}
+          >
+            Gene Ontology Molecular Function
+          </a>{' '}
+          (GO MF) terms. GO Biological Process terms and RefSeq summaries were deliberately
+          excluded because they frequently contain lifespan-related language that would leak
+          the answer to the model.
         </P>
         <P>
           An <strong>automated redaction pass</strong> then stripped remaining lifespan and aging
@@ -368,15 +395,31 @@ export default async function MethodologyPage() {
         <P>
           Because the advisor is itself a language model, its judgments could be systematically
           biased. To quantify this, 30 entries were randomly sampled and hand-graded by Andrew
-          T. Rodriguez, Ph.D. Cohen&apos;s kappa was computed between the advisor&apos;s grades
-          and the hand grades on the{' '}
+          T. Rodriguez, Ph.D.{' '}
+          <a
+            href="#cohen-1960"
+            className="underline hover:opacity-70"
+            style={{ color: 'var(--color-primary)' }}
+          >
+            Cohen&apos;s kappa
+          </a>{' '}
+          was computed between the advisor&apos;s grades and the hand grades on the{' '}
           <code className="font-mono text-[13px]">answer_correct</code> field.
         </P>
         {kappa != null ? (
           <P>
             The measured κ is <strong>{kappa.toFixed(2)}</strong>.
-            Values above 0.7 are considered strong agreement. This provides a concrete
-            calibration point for interpreting the advisor&apos;s grading.
+            Values above 0.7 are considered strong agreement. On the{' '}
+            <a
+              href="#landis-koch-1977"
+              className="underline hover:opacity-70"
+              style={{ color: 'var(--color-primary)' }}
+            >
+              Landis &amp; Koch (1977)
+            </a>{' '}
+            scale, this falls in the &ldquo;substantial agreement&rdquo; range (0.61–0.80).
+            This provides a concrete calibration point for interpreting the
+            advisor&apos;s grading.
           </P>
         ) : (
           <P>
@@ -488,36 +531,92 @@ export default async function MethodologyPage() {
         </ul>
       </section>
 
-      {/* 10. Citation */}
-      <Section id="citation">
-        <H2>Citation</H2>
-        <div
-          className="rounded-lg p-4 text-[14px] leading-[1.6]"
-          style={{
-            backgroundColor: 'var(--color-bg-muted)',
-            border: '0.5px solid var(--color-border)',
-            color: 'var(--color-text)',
-          }}
-        >
-          <p>
-            López-Otín, C., Blasco, M. A., Partridge, L., Serrano, M., &amp; Kroemer, G.
-            (2023). Hallmarks of aging: An expanding universe.{' '}
-            <em>Cell</em>, <em>186</em>(2), 243–278.{' '}
-            <a
-              href="https://doi.org/10.1016/j.cell.2022.11.001"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:opacity-70"
-              style={{ color: 'var(--color-primary)' }}
-            >
-              https://doi.org/10.1016/j.cell.2022.11.001
-            </a>
-          </p>
+      {/* 10. References */}
+      <Section id="references">
+        <H2>References</H2>
+        <div className="space-y-7 text-[14px] leading-[1.7]" style={{ color: 'var(--color-text)' }}>
+
+          <div>
+            <H3>Hallmarks framework</H3>
+            <p id="lopez-otin-2023" className="scroll-mt-20">
+              López-Otín, C., Blasco, M. A., Partridge, L., Serrano, M., &amp; Kroemer, G.
+              (2023). Hallmarks of aging: An expanding universe.{' '}
+              <em>Cell</em>, <em>186</em>(2), 243–278.{' '}
+              <a href="https://doi.org/10.1016/j.cell.2022.11.001" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-70 break-all" style={{ color: 'var(--color-primary)' }}>
+                https://doi.org/10.1016/j.cell.2022.11.001
+              </a>
+            </p>
+          </div>
+
+          <div>
+            <H3>Aging gene dataset (GenAge / HAGR)</H3>
+            <div className="space-y-2">
+              <p id="tacutu-2018" className="scroll-mt-20">
+                Tacutu, R., Thornton, D., Johnson, E., Budovsky, A., Barardo, D., Craig, T.,
+                Diana, E., Lehmann, G., Toren, D., Wang, J., Fraifeld, V. E., &amp;
+                de Magalhães, J. P. (2018). Human Ageing Genomic Resources: new and updated
+                databases. <em>Nucleic Acids Research</em>, <em>46</em>(D1), D1083–D1090.{' '}
+                <a href="https://doi.org/10.1093/nar/gkx1042" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-70 break-all" style={{ color: 'var(--color-primary)' }}>
+                  https://doi.org/10.1093/nar/gkx1042
+                </a>
+              </p>
+              <p>
+                Project:{' '}
+                <a href="https://genomics.senescence.info/genes/" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-70 break-all" style={{ color: 'var(--color-primary)' }}>
+                  https://genomics.senescence.info/genes/
+                </a>
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <H3>Gene annotations</H3>
+            <div className="space-y-2">
+              <p id="sayers-2022" className="scroll-mt-20">
+                Sayers, E. W., et al. (2022). Database resources of the National Center for
+                Biotechnology Information. <em>Nucleic Acids Research</em>, <em>50</em>(D1),
+                D20–D26.{' '}
+                <a href="https://doi.org/10.1093/nar/gkab1112" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-70 break-all" style={{ color: 'var(--color-primary)' }}>
+                  https://doi.org/10.1093/nar/gkab1112
+                </a>
+              </p>
+              <p>
+                NCBI E-utilities documentation:{' '}
+                <a href="https://www.ncbi.nlm.nih.gov/books/NBK25501/" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-70 break-all" style={{ color: 'var(--color-primary)' }}>
+                  https://www.ncbi.nlm.nih.gov/books/NBK25501/
+                </a>
+              </p>
+              <p id="go-consortium-2023" className="scroll-mt-20">
+                The Gene Ontology Consortium. (2023). The Gene Ontology knowledgebase in 2023.{' '}
+                <em>Genetics</em>, <em>224</em>(1), iyad031.{' '}
+                <a href="https://doi.org/10.1093/genetics/iyad031" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-70 break-all" style={{ color: 'var(--color-primary)' }}>
+                  https://doi.org/10.1093/genetics/iyad031
+                </a>
+              </p>
+              <p>
+                Project:{' '}
+                <a href="http://geneontology.org" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-70" style={{ color: 'var(--color-primary)' }}>
+                  http://geneontology.org
+                </a>
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <H3>Inter-rater agreement</H3>
+            <div className="space-y-2">
+              <p id="cohen-1960" className="scroll-mt-20">
+                Cohen, J. (1960). A coefficient of agreement for nominal scales.{' '}
+                <em>Educational and Psychological Measurement</em>, <em>20</em>(1), 37–46.
+              </p>
+              <p id="landis-koch-1977" className="scroll-mt-20">
+                Landis, J. R., &amp; Koch, G. G. (1977). The measurement of observer agreement
+                for categorical data. <em>Biometrics</em>, <em>33</em>(1), 159–174.
+              </p>
+            </div>
+          </div>
+
         </div>
-        <p className="mt-3 text-[13px]" style={{ color: 'var(--color-text-tertiary)' }}>
-          A preprint or author-archived version may be available; Andrew will add a link
-          post-launch if one exists.
-        </p>
       </Section>
 
     </main>
