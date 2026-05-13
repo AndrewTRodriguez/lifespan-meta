@@ -207,8 +207,13 @@ export default async function MethodologyPage() {
           </li>
           <li>
             <strong>Counterfactual split.</strong> The gene symbol is replaced with the placeholder{' '}
-            <code className="font-mono text-[13px]">GENE-X</code>. Everything else is identical.
-            The model must reason purely from molecular function annotations.
+            <code className="font-mono text-[13px]">GENE-X</code>. Everything else — including
+            the organism name and the full functional annotation (protein names and Gene Ontology
+            Molecular Function terms) — is identical to the main split.{' '}
+            <Link href="#blinding" style={{ color: 'var(--color-primary)' }} className="underline hover:opacity-70">
+              See the Limitations section
+            </Link>{' '}
+            for what this does and doesn&apos;t blind.
           </li>
         </ul>
         <P>
