@@ -128,12 +128,14 @@ export default async function DashboardPage() {
       <section className="mb-8">
         <p className="text-[15px] leading-[1.6]" style={{ color: 'var(--color-text)' }}>
           A 1,379-gene evaluation of Claude Sonnet 4.6&apos;s ability to predict whether an
-          aging gene promotes or opposes longevity, given only the gene&apos;s molecular
-          function. The model reaches 45% accuracy on a 3-class task — but the more revealing
-          finding is a directional bias: it identifies pro-longevity genes 73% of the time and
-          anti-longevity genes only 30% of the time, often inverting the label even when its
-          own reasoning arrives at the correct mechanism. Each per-entry page shows the prompt,
-          the model&apos;s reasoning, the GenAge ground truth, and an LLM-graded judgment.
+          aging gene promotes or opposes longevity from its functional annotation (gene symbol,
+          protein names, and GO Molecular Function terms, with lifespan language stripped). Each
+          entry is also evaluated with the symbol blinded as a contamination control. The model
+          reaches 45% accuracy on a 3-class task — but the more revealing finding is a
+          directional bias: it identifies pro-longevity genes 73% of the time and anti-longevity
+          genes only 30% of the time, often inverting the label even when its own reasoning
+          arrives at the correct mechanism. Each per-entry page shows the prompt, the
+          model&apos;s reasoning, the GenAge ground truth, and an LLM-graded judgment.
         </p>
       </section>
 
