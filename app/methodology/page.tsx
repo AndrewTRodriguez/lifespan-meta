@@ -317,7 +317,7 @@ export default async function MethodologyPage() {
           </a>, which catalogs genes with known effects on lifespan across model organisms
           (<em>C. elegans</em>, <em>D. melanogaster</em>, <em>S. cerevisiae</em>, and{' '}
           <em>M. musculus</em>). The CSV was downloaded on{' '}
-          <span style={{ color: 'var(--color-warning)' }}>[date TK — confirm with Andrew]</span>{' '}
+          May 9, 2026{' '}
           and contained 2,202 entries.
         </P>
         <P>
