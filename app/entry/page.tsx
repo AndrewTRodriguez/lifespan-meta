@@ -222,7 +222,7 @@ export default async function EntryListPage({
               <Link
                 key={entry.id}
                 href={entryUrl(entry.id, mechanism, failureMode)}
-                className="flex items-center gap-2 px-4 py-3 transition-colors hover:bg-[var(--color-bg-subtle)]"
+                className="flex items-center gap-2 px-4 py-3 overflow-x-auto md:overflow-visible transition-colors hover:bg-[var(--color-bg-subtle)]"
                 style={{ borderTop: i > 0 ? '0.5px solid var(--color-border)' : undefined }}
               >
                 <em
@@ -238,8 +238,8 @@ export default async function EntryListPage({
                 >
                   {displayOrganism(entry.organism)}
                 </em>
-                <span className="flex-1" />
-                <div className="flex items-center gap-1.5 shrink-0">
+                <span className="hidden md:block flex-1" />
+                <div className="flex items-center gap-1.5 shrink-0 ml-2">
                   {entry.predicted_longevity_influence && (
                     <>
                       <LongevityBadge value={entry.predicted_longevity_influence} />

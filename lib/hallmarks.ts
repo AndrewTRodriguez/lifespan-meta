@@ -53,7 +53,7 @@ export const HALLMARKS = {
   altered_intercellular_communication: {
     displayName: 'Altered intercellular communication',
     paraphrase:
-      'Disruption of signaling between cells, tissues, and organs — including neuroendocrine, paracrine, and immune signals — that coordinates organism-wide homeostasis.',
+      'Disruption of signaling between cells, tissues, and organs (including neuroendocrine, paracrine, and immune signals) that coordinates organism-wide homeostasis.',
   },
   chronic_inflammation: {
     displayName: 'Chronic inflammation',

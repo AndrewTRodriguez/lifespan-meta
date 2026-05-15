@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDna, faChartLine, faMicroscope, faStar, faArrowRight, faFlaskVial } from '@fortawesome/free-solid-svg-icons';
 import { sql } from '@/lib/db';
 import type { RunRow, FailureMode, LongevityInfluence } from '@/lib/types';
 import { MetricCard } from '@/components/MetricCard';
@@ -101,7 +103,8 @@ export default async function DashboardPage() {
 
       {/* Header */}
       <section className="mb-8">
-        <h1 className="text-[28px] font-semibold leading-tight" style={{ color: 'var(--color-text)' }}>
+        <h1 className="text-[28px] font-semibold leading-tight flex items-center gap-3" style={{ color: 'var(--color-text)' }}>
+          <FontAwesomeIcon icon={faDna} style={{ color: 'var(--color-primary)', width: '24px', height: '24px' }} />
           Aging biology eval
         </h1>
         <p className="mt-1 text-[15px]" style={{ color: 'var(--color-text-secondary)' }}>
@@ -129,9 +132,9 @@ export default async function DashboardPage() {
         <p className="text-[15px] leading-[1.6]" style={{ color: 'var(--color-text)' }}>
           A 1,379-gene evaluation of Claude Sonnet 4.6&apos;s ability to predict whether an
           aging gene promotes or opposes longevity from its functional annotation (gene symbol,
-          protein names, and GO Molecular Function terms, with lifespan language stripped). Each
+          functional descriptors, and GO Molecular Function terms, with lifespan language stripped). Each
           entry is also evaluated with the symbol blinded as a contamination control. The model
-          reaches 45% accuracy on a 3-class task — but the more revealing finding is a
+          reaches 45% accuracy on a 3-class task. The more revealing finding is a
           directional bias: it identifies pro-longevity genes 73% of the time and anti-longevity
           genes only 30% of the time, often inverting the label even when its own reasoning
           arrives at the correct mechanism. Each per-entry page shows the prompt, the
@@ -155,7 +158,7 @@ export default async function DashboardPage() {
             3-class longevity influence prediction across {agg.total_entries.toLocaleString()} aging genes.
             Cohen&apos;s κ = {agg.advisor_kappa_vs_expert != null
               ? agg.advisor_kappa_vs_expert.toFixed(2)
-              : '—'} vs. expert hand-grading.
+              : 'pending'} vs. expert hand-grading.
           </p>
         </div>
       </section>
@@ -171,8 +174,7 @@ export default async function DashboardPage() {
           <MetricCard
             label="Contamination gap"
             value={`−${agg.contamination_gap_pp} pp`}
-            footnote="See methodology →"
-            footnoteHref="/methodology#blinding"
+            footnote="Main minus counterfactual"
           />
           <MetricCard
             label="Mechanism accuracy"
@@ -183,7 +185,7 @@ export default async function DashboardPage() {
             label="Advisor κ vs. expert"
             value={agg.advisor_kappa_vs_expert != null
               ? agg.advisor_kappa_vs_expert.toFixed(2)
-              : '—'}
+              : 'pending'}
             footnote="Cohen's kappa, hand-graded sample"
           />
         </div>
@@ -203,7 +205,8 @@ export default async function DashboardPage() {
 
       {/* Failure mode breakdown */}
       <section className="mb-8">
-        <h2 className="text-[20px] font-semibold mb-4" style={{ color: 'var(--color-text)' }}>
+        <h2 className="text-[20px] font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
+          <FontAwesomeIcon icon={faChartLine} style={{ color: 'var(--color-primary)', width: '18px', height: '18px' }} />
           Failure mode breakdown
         </h2>
         <div
@@ -218,7 +221,8 @@ export default async function DashboardPage() {
 
       {/* Per-class recall strip */}
       <section className="mb-8">
-        <h2 className="text-[20px] font-semibold mb-3" style={{ color: 'var(--color-text)' }}>
+        <h2 className="text-[20px] font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
+          <FontAwesomeIcon icon={faMicroscope} style={{ color: 'var(--color-primary)', width: '18px', height: '18px' }} />
           Accuracy by class
         </h2>
         <div className="flex flex-wrap gap-3">
@@ -242,13 +246,14 @@ export default async function DashboardPage() {
 
       {/* Notable entries */}
       <section>
-        <h2 className="text-[20px] font-semibold mb-2" style={{ color: 'var(--color-text)' }}>
+        <h2 className="text-[20px] font-semibold mb-2 flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
+          <FontAwesomeIcon icon={faStar} style={{ color: 'var(--color-primary)', width: '18px', height: '18px' }} />
           Notable entries
         </h2>
         <p className="text-[14px] leading-[1.6] mb-3" style={{ color: 'var(--color-text-secondary)' }}>
           Seven entries spanning GenAge&apos;s four model organisms, mixing textbook correct
           cases on canonical aging genes (<em>daf-2</em>, <em>age-1</em>, <em>foxo</em>,{' '}
-          <em>TOR1</em>) with examples of failure modes the eval surfaces — label inversions
+          <em>TOR1</em>) with examples of failure modes the eval surfaces: label inversions
           (<em>chico</em>, <em>Ghrhr</em>) and a confident commitment against a
           curator-assigned unclear ground truth (<em>SIR2</em>).
         </p>
@@ -286,6 +291,64 @@ export default async function DashboardPage() {
             Browse all {agg.total_entries.toLocaleString()} entries →
           </Link>
         </p>
+      </section>
+
+      {/* Significance */}
+      <section className="mt-12">
+        <h2 className="text-[20px] font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
+          <FontAwesomeIcon icon={faFlaskVial} style={{ color: 'var(--color-primary)', width: '18px', height: '18px' }} />
+          Significance
+        </h2>
+        <p className="text-[15px] leading-[1.6]" style={{ color: 'var(--color-text)' }}>
+          Aging biology is a domain where superficially correct text can mask shaky reasoning. By
+          stripping lifespan language from each entry and grading both the answer and its
+          mechanism, this eval distinguishes genuine inference from pattern-matching on familiar
+          gene names. The headline finding is not the 45% accuracy itself but the directional
+          asymmetry: the model identifies pro-longevity genes 73% of the time and anti-longevity
+          genes only 30%, frequently producing reasoning that contradicts its own final label.
+          That gap is a tractable target for prompting work, fine-tuning, and benchmarking future
+          models on a task with curator-grounded ground truth.
+        </p>
+      </section>
+
+      {/* Next steps */}
+      <section className="mt-12 mb-4">
+        <h2 className="text-[20px] font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
+          <FontAwesomeIcon icon={faArrowRight} style={{ color: 'var(--color-primary)', width: '18px', height: '18px' }} />
+          Next steps
+        </h2>
+        <ul
+          className="list-disc list-outside ml-5 space-y-2 text-[15px] leading-[1.6]"
+          style={{ color: 'var(--color-text)' }}
+        >
+          <li>
+            <strong>Compare across models.</strong> Run the same eval against Claude Opus, GPT-5,
+            Gemini, and open-source models (Llama 4, Qwen 3, DeepSeek-R1) to see whether the
+            directional bias is Claude-specific or a property of LLMs trained on overlapping
+            corpora.
+          </li>
+          <li>
+            <strong>Add a label-inversion failure mode.</strong> The current taxonomy buckets
+            inversions into <code className="font-mono text-[13px]">confident_wrong</code> or{' '}
+            <code className="font-mono text-[13px]">right_answer_wrong_reasoning</code>. A
+            dedicated <code className="font-mono text-[13px]">reasoning_contradicts_prediction</code>{' '}
+            class would surface the ~3% of entries where the reasoning was right but the structured
+            output flipped.
+          </li>
+          <li>
+            <strong>Tighten counterfactual blinding.</strong> Strip the gene&apos;s functional
+            descriptor from the redacted input as well, leaving only Gene Ontology Molecular
+            Function terms, to measure how much performance survives stricter blinding.
+          </li>
+          <li>
+            <strong>Test prompting interventions.</strong> Add explicit examples of GenAge label
+            conventions to the system prompt and measure whether the inversion rate drops.
+          </li>
+          <li>
+            <strong>Expand to human longevity genes.</strong> Extend the eval to LongevityMap
+            and human GWAS hits to test whether the asymmetry holds outside model organisms.
+          </li>
+        </ul>
       </section>
 
     </main>

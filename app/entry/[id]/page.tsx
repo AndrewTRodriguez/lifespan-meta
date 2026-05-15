@@ -59,8 +59,8 @@ export async function generateMetadata({
   if (!rows[0]) return { title: 'Entry not found' };
   const { symbol, organism } = rows[0];
   return {
-    title: symbol ? `${symbol} — ${organism}` : `Entry ${id}`,
-    description: `Eval results for ${symbol || 'this gene'} (${organism}) — longevity influence prediction, mechanism class, and advisor judgment.`,
+    title: symbol ? `${symbol} · ${organism}` : `Entry ${id}`,
+    description: `Eval results for ${symbol || 'this gene'} (${organism}). Longevity influence prediction, mechanism class, and advisor judgment.`,
   };
 }
 

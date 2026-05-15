@@ -24,7 +24,7 @@ async function getKappa(): Promise<number | null> {
 // ---------------------------------------------------------------------------
 
 function EvalDiagram() {
-  // Hardcoded hex values from design tokens — CSS variables are unreliable
+  // Hardcoded hex values from design tokens. CSS variables are unreliable
   // in SVG presentation attributes.
   const blue = '#0067AC';
   const blueTint = '#E6F0F7';
@@ -178,7 +178,7 @@ export default async function MethodologyPage() {
           scientific databases, review articles, and curated resources. When a model is asked about
           a well-characterized gene like <code className="font-mono text-[13px]">daf-2</code>, it
           may answer correctly not because it is reasoning from first principles, but because it
-          encountered the answer during training — a form of memorization rather than reasoning.
+          encountered the answer during training, a form of memorization rather than reasoning.
           This is the contamination problem: the test data may have leaked into the training data,
           inflating apparent capability.
         </P>
@@ -186,7 +186,7 @@ export default async function MethodologyPage() {
           In classical machine learning, contamination is addressed by holding out a test set the
           model has never seen. For a biology eval built on public databases, perfect isolation is
           impossible. A different approach is needed: we can measure how much performance depends
-          on the gene symbol by running the same eval twice — once with the real symbol visible,
+          on the gene symbol by running the same eval twice: once with the real symbol visible,
           and once with it blinded.
         </P>
       </Section>
@@ -207,9 +207,9 @@ export default async function MethodologyPage() {
           </li>
           <li>
             <strong>Counterfactual split.</strong> The gene symbol is replaced with the placeholder{' '}
-            <code className="font-mono text-[13px]">GENE-X</code>. Everything else — including
-            the organism name, the protein&apos;s descriptive name, and Gene Ontology Molecular
-            Function terms — is identical to the main split.{' '}
+            <code className="font-mono text-[13px]">GENE-X</code>. Everything else, including
+            the organism name, the gene&apos;s functional description, and Gene Ontology Molecular
+            Function terms, is identical to the main split.{' '}
             <Link href="#blinding" style={{ color: 'var(--color-primary)' }} className="underline hover:opacity-70">
               See the Limitations section
             </Link>{' '}
@@ -217,8 +217,8 @@ export default async function MethodologyPage() {
           </li>
         </ul>
         <P>
-          The accuracy gap between the two splits — main accuracy minus counterfactual accuracy
-          — is the <strong>contamination gap</strong>. A large gap indicates that the model relies
+          The accuracy gap between the two splits (main accuracy minus counterfactual accuracy)
+          is the <strong>contamination gap</strong>. A large gap indicates that the model relies
           heavily on recognizing gene names. A small gap suggests the model can reason from
           functional descriptions alone, whether or not the symbol is familiar.
         </P>
@@ -284,7 +284,7 @@ export default async function MethodologyPage() {
       <Section id="hallmarks">
         <H2>Mechanism classes: the hallmarks of aging</H2>
         <P>
-          The solver is asked to assign each gene to a <em>mechanism class</em> — the aging
+          The solver is asked to assign each gene to a <em>mechanism class</em>, the aging
           pathway most relevant to that gene&apos;s molecular function. The enum is drawn from
           the López-Otín 2023 framework, which identifies 12 hallmarks of aging plus{' '}
           <em>other</em> (for mechanisms outside the framework) and <em>unclear</em> (when the
@@ -330,7 +330,7 @@ export default async function MethodologyPage() {
             style={{ color: 'var(--color-primary)' }}
           >
             <strong>NCBI Gene via E-utilities</strong>
-          </a>: the official full name, protein names, and{' '}
+          </a>: the official full name, functional descriptors, and{' '}
           <a
             href="http://geneontology.org/docs/ontology-documentation/"
             target="_blank"
@@ -357,7 +357,7 @@ export default async function MethodologyPage() {
           The three valid longevity influence classes used in the eval are{' '}
           <code className="font-mono text-[13px]">pro_longevity</code>,{' '}
           <code className="font-mono text-[13px]">anti_longevity</code>, and{' '}
-          <code className="font-mono text-[13px]">unclear</code> — 1,385 entries in total.
+          <code className="font-mono text-[13px]">unclear</code>, totaling 1,385 entries.
           The remaining entries carry labels{' '}
           <code className="font-mono text-[13px]">necessary_for_fitness</code> or{' '}
           <code className="font-mono text-[13px]">unannotated</code>, which are excluded
@@ -371,7 +371,7 @@ export default async function MethodologyPage() {
         <P>
           The ground-truth labels come from GenAge&apos;s curators. For each gene, curators
           synthesize evidence across multiple studies and assign a{' '}
-          <em>Longevity Influence</em> label — the gene&apos;s normal-function role in
+          <em>Longevity Influence</em> label that captures the gene&apos;s normal-function role in
           promoting or opposing longevity.
         </P>
         <P>
@@ -436,21 +436,21 @@ export default async function MethodologyPage() {
           The model shows a strong directional bias: pro-longevity recall is 73% but
           anti-longevity recall is only 30%, despite anti-longevity being the larger class
           (878 vs. 481 entries). Closer inspection of the misclassifications reveals a specific
-          failure mode the eval&apos;s seven-class taxonomy doesn&apos;t cleanly capture: the
+          failure mode the eval&apos;s seven-class taxonomy doesn&apos;t cleanly capture. The
           model&apos;s reasoning text correctly describes the gene&apos;s role, but the final
           structured prediction inverts the label.
         </P>
         <P>
           Approximately 45 entries (~3% of main-split results) show this pattern. Many are
-          textbook anti-longevity genes —{' '}
+          textbook anti-longevity genes such as{' '}
           <em>C. elegans</em>{' '}
           <code className="font-mono text-[13px]">atp-2</code>,{' '}
           <code className="font-mono text-[13px]">clk-1</code>,{' '}
           <code className="font-mono text-[13px]">mrpl-1</code>,{' '}
-          <code className="font-mono text-[13px]">eat-2</code>;{' '}
+          <code className="font-mono text-[13px]">eat-2</code>,{' '}
           <em>Drosophila</em>{' '}
-          <code className="font-mono text-[13px]">chico</code>;{' '}
-          mouse <code className="font-mono text-[13px]">Ghrhr</code> — where the model&apos;s
+          <code className="font-mono text-[13px]">chico</code>, and{' '}
+          mouse <code className="font-mono text-[13px]">Ghrhr</code>. In these cases the model&apos;s
           reasoning correctly states that the gene&apos;s normal activity opposes longevity
           (because reducing it extends lifespan), but the prediction field outputs{' '}
           <code className="font-mono text-[13px]">pro_longevity</code>. The advisor&apos;s
@@ -460,9 +460,9 @@ export default async function MethodologyPage() {
           strictly speaking neither fits.
         </P>
         <P>
-          The pattern suggests the model is confused about the GenAge label convention — that
+          The pattern suggests the model is confused about the GenAge label convention (that
           &ldquo;Anti-Longevity&rdquo; describes the gene&apos;s normal-function role, not the
-          direction of any particular manipulation — rather than the underlying biology. A future
+          direction of any particular manipulation) rather than the underlying biology. A future
           iteration of this eval should add a dedicated{' '}
           <code className="font-mono text-[13px]">reasoning_contradicts_prediction</code> failure
           mode and may want to test whether explicit label-convention examples in the system
@@ -484,9 +484,9 @@ export default async function MethodologyPage() {
           style={{ color: 'var(--color-text)' }}
         >
           <li>
-            <strong>Input is GO MF + protein names only.</strong> The model sees a deliberately
-            narrow slice of each gene&apos;s biology. Richer functional descriptions — including
-            GO Biological Process or RefSeq summaries — might produce different accuracy, but
+            <strong>Input is GO MF terms and functional descriptors only.</strong> The model sees a deliberately
+            narrow slice of each gene&apos;s biology. Richer functional descriptions (including
+            GO Biological Process or RefSeq summaries) might produce different accuracy, but
             those sources are excluded because they often contain lifespan-related language.
           </li>
           <li>
@@ -510,17 +510,17 @@ export default async function MethodologyPage() {
             <strong>Counterfactual blinding is incomplete.</strong> The counterfactual split
             replaces the gene symbol with{' '}
             <code className="font-mono text-[13px]">GENE-X</code> but preserves the rest of the
-            functional annotation, including the protein&apos;s descriptive name (e.g.,
+            functional annotation, including the gene&apos;s functional descriptor (e.g.,
             &ldquo;Insulin-like receptor subunit beta&rdquo;) and its Gene Ontology Molecular
             Function terms. The gene symbol{' '}
             <code className="font-mono text-[13px]">daf-2</code> and the protein symbol{' '}
             <code className="font-mono text-[13px]">DAF-2</code> are both blinded, but the
-            descriptive name &ldquo;Insulin-like receptor subunit beta&rdquo; combined with the
+            functional descriptor &ldquo;Insulin-like receptor subunit beta&rdquo; combined with the
             organism &ldquo;Caenorhabditis elegans&rdquo; uniquely identifies the gene. For
             well-characterized genes, this means blinding is only partial. The small
             main-vs-counterfactual accuracy gap reflects this limitation more than the
             model&apos;s underlying reasoning capability. A more rigorous future version of this
-            eval would strip protein descriptive names from the redacted input as well, leaving
+            eval would strip the functional descriptors from the redacted input as well, leaving
             only Gene Ontology Molecular Function terms. The eval remains useful as a test of the
             model&apos;s biological reasoning even where blinding is imperfect: the model still
             has to articulate a mechanism, identify the correct pathway, and arrive at the correct

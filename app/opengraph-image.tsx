@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 
-export const alt = "Aging biology eval — Probing Claude's reasoning about gene effects on lifespan";
+export const alt = "Aging biology eval. Probing Claude's reasoning about gene effects on lifespan.";
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
