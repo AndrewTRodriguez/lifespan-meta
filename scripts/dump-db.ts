@@ -40,7 +40,9 @@ async function dumpTable(out: fs.WriteStream, table: string, rows: any[]) {
 }
 
 async function main() {
-  const out = fs.createWriteStream('genage_eval_dump.sql');
+  const outPath = 'db/seed/genage_eval_dump.sql';
+  fs.mkdirSync('db/seed', { recursive: true });
+  const out = fs.createWriteStream(outPath);
   out.write('-- GenAge eval dump\n');
   out.write('-- Apply migrations first, then restore this file\n\n');
   out.write('SET session_replication_role = replica; -- disable FK checks during load\n');
@@ -57,7 +59,7 @@ async function main() {
   out.write('\nSET session_replication_role = DEFAULT;\n');
   out.end();
 
-  console.log('\nDone. Output: genage_eval_dump.sql');
+  console.log(`\nDone. Output: ${outPath}`);
   await sql.end();
 }
 

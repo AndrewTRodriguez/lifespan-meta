@@ -1,17 +1,21 @@
 {
   "name": "lifespan-meta",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Data pipeline, eval runner, and Next.js dashboard for benchmarking LLM predictions of gene longevity influence using the GenAge database.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["aging", "longevity", "llm-eval", "genage", "bioinformatics"],
+  "author": "Andrew T. Rodriguez",
+  "license": "MIT",
+  "homepage": "https://lifespan.andrewtrodriguez.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AndrewTRodriguez/lifespan-meta"
+  },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.95.1",
     "@fortawesome/fontawesome-svg-core": "^7.2.0",

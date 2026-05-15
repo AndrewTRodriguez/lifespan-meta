@@ -1,154 +1,189 @@
-# Eval runner
+# 🧬 Lifespan Meta — GenAge LLM Eval
 
-Code for running the GenAge longevity-influence eval. Drop these files into your existing project at `C:\Users\atomr\lifespan-meta`. The directory layout matches what the runner expects:
+> Benchmarking how well frontier LLMs predict whether a gene's normal function promotes or opposes longevity, using the [GenAge model organisms database](https://genomics.senescence.info/genes/).
+
+🌐 **Live dashboard:** [lifespan.andrewtrodriguez.com](https://lifespan.andrewtrodriguez.com)
+
+## 🎯 What this is
+
+A reproducible evaluation of Claude Sonnet 4.6 on a gene-function reasoning task. Given a gene's name, organism, and known molecular functions, the model predicts whether the gene's normal function:
+
+- **`pro_longevity`** — promotes lifespan extension
+- **`anti_longevity`** — opposes lifespan extension
+- **`unclear`** — ambiguous from the available evidence
+
+The eval has two splits:
+
+- **`main`** — gene symbol visible (model can recognize names)
+- **`counterfactual`** — gene symbol blinded (model must reason from molecular function alone)
+
+The **gap between the two splits** is the headline finding: how much of the model's apparent capability comes from name recognition vs. mechanistic reasoning.
+
+## 📁 Project Structure
 
 ```
-lifespan-meta/
-├── db/migrations/
-│   ├── 002_normalize_casing.sql       (new)
-│   └── 003_runs_results.sql           (new)
-├── lib/
-│   ├── db.ts                          (new)
-│   ├── format-entry.ts                (new)
-│   ├── prompts.ts                     (new)
-│   ├── anthropic.ts                   (new)
-│   └── types.ts                       (new)
-└── scripts/
-    ├── run-eval.ts                    (new)
-    ├── aggregate.ts                   (new)
-    ├── sample-for-kappa.ts            (new)
-    └── save-kappa.ts                  (new)
+.
+├── app/                      # Next.js App Router (dashboard, methodology, per-entry views)
+│   ├── entry/[id]/           # Per-gene detail page
+│   ├── methodology/          # Eval design + hallmarks framework
+│   ├── layout.tsx
+│   ├── page.tsx              # Dashboard
+│   ├── opengraph-image.tsx
+│   ├── icon.tsx
+│   └── sitemap.ts
+├── components/               # Reusable UI (Badge, FilterPills, MetricCard, …)
+├── lib/                      # Domain logic
+│   ├── anthropic.ts          # Anthropic SDK wrapper + MODEL constant
+│   ├── prompts.ts            # System prompts + tool schemas (versioned)
+│   ├── format-entry.ts       # Entry → prompt template (versioned)
+│   ├── format-display.ts     # Display formatting helpers
+│   ├── hallmarks.ts          # López-Otín hallmarks of aging
+│   ├── notable.ts            # Curated notable entries
+│   ├── methodology-examples.ts
+│   ├── types.ts
+│   └── db.ts                 # Postgres client (Neon serverless)
+├── db/
+│   ├── migrations/           # SQL migrations (apply in order)
+│   │   ├── 001_entries.sql
+│   │   ├── 002_normalize_casing.sql
+│   │   └── 003_runs_results.sql
+│   └── seed/
+│       └── genage_eval_dump.sql   # GenAge entries (8.6MB, ~1,845 rows)
+├── scripts/                  # CLI tooling (eval runner, aggregation, kappa sampling)
+│   ├── run-eval.ts           # Runs the eval (resumable)
+│   ├── aggregate.ts          # Computes accuracy, contamination gap, etc.
+│   ├── sample-for-kappa.ts   # Hand-grading sample for inter-rater reliability
+│   ├── save-kappa.ts
+│   ├── seed-entries.ts
+│   ├── redact-and-qc.ts
+│   ├── sample-passed.ts
+│   ├── dump-db.ts
+│   ├── fetch_ncbi.py         # NCBI gene fetcher
+│   └── schema.sql
+└── package.json
 ```
 
-## One-time setup
+## 🚀 Setup
 
-1. **Install missing dependencies** (skip any you already have):
-   ```bash
-   pnpm add @anthropic-ai/sdk dotenv
-   pnpm add -D tsx
-   ```
+### 1. Install dependencies
 
-2. **Confirm `.env` has both keys**:
-   ```
-   DATABASE_URL=postgres://...
-   ANTHROPIC_API_KEY=sk-ant-...
-   ```
+```bash
+pnpm install
+```
 
-3. **Apply the migrations** in order:
-   ```bash
-   psql "%DATABASE_URL%" -f db/migrations/002_normalize_casing.sql
-   psql "%DATABASE_URL%" -f db/migrations/003_runs_results.sql
-   ```
-   (On Windows PowerShell use `$env:DATABASE_URL` instead of `%DATABASE_URL%`. Or just paste the URL.)
+### 2. Configure environment
 
-4. **Sanity-check the casing migration**:
-   ```sql
-   SELECT longevity_influence, COUNT(*) FROM entries GROUP BY 1 ORDER BY 2 DESC;
-   ```
-   You should see `pro_longevity`, `anti_longevity`, `unclear`, `necessary_for_fitness`, `unannotated` — all snake_case.
+Create `.env.local`:
 
-## Run order
+```
+DATABASE_URL=postgres://...
+ANTHROPIC_API_KEY=sk-ant-...
+```
 
-### Step 1: smoke test (5 entries, ~$0.10, ~1 minute)
+### 3. Initialize the database
+
+Apply the migrations in order, then load the seed data:
+
+```bash
+psql "$DATABASE_URL" -f db/migrations/001_entries.sql
+psql "$DATABASE_URL" -f db/migrations/002_normalize_casing.sql
+psql "$DATABASE_URL" -f db/migrations/003_runs_results.sql
+psql "$DATABASE_URL" -f db/seed/genage_eval_dump.sql
+```
+
+Sanity check:
+
+```sql
+SELECT longevity_influence, COUNT(*) FROM entries GROUP BY 1 ORDER BY 2 DESC;
+```
+
+You should see `pro_longevity`, `anti_longevity`, `unclear`, `necessary_for_fitness`, `unannotated` — all snake_case.
+
+## 🧪 Running the Eval
+
+### Smoke test (5 entries, ~$0.10, ~1 min)
 
 ```bash
 pnpm tsx scripts/run-eval.ts --smoke --notes "smoke test"
 ```
 
-Watch the output. You should see lines like `[1/10] aak-2 main ✓ (3214ms)`. If anything looks wrong (unexpected errors, failures, weird outputs), debug before the full run.
-
-After smoke, inspect a row to confirm the JSON shapes are sane:
-```sql
-SELECT entry_id, split, solver->'longevity_influence', advisor->'failure_mode'
-FROM results
-WHERE run_id = (SELECT id FROM runs WHERE notes = 'smoke test' ORDER BY id DESC LIMIT 1)
-LIMIT 4;
-```
-
-If you want to throw away the smoke run before the full one:
-```sql
-DELETE FROM runs WHERE notes = 'smoke test';
-```
-(Cascade deletes the matching results rows automatically.)
-
-### Step 2: full run
+### Full run (~1,385 entries × 2 splits, ~$25–50, 1–6 hours)
 
 ```bash
 pnpm tsx scripts/run-eval.ts --notes "first full run, claude-sonnet-4-6"
 ```
 
-This will iterate ~1,385 eligible entries × 2 splits × 2 calls = ~5,540 Sonnet calls. Costs roughly $25–50 depending on output token counts. Wall time depends on your Anthropic rate-limit tier; expect anywhere from 1 to 6 hours. Tier 1 (50 RPM default) is the slow case.
-
-The runner prints progress per call and is **fully resumable** — it skips any (entry, split) already in the results table. If the script crashes or you Ctrl+C, just re-run it with `--resume <runId>`:
+The runner is **fully resumable** — it skips any `(entry, split)` pair already in `results`. To resume:
 
 ```bash
-pnpm tsx scripts/run-eval.ts --resume 2
+pnpm tsx scripts/run-eval.ts --resume <runId>
 ```
 
-(Find the run ID in the runner's first line of output, or via `SELECT id, notes FROM runs ORDER BY id DESC;`.)
-
-### Step 3: aggregate
+### Aggregate
 
 ```bash
-pnpm tsx scripts/aggregate.ts 2
+pnpm tsx scripts/aggregate.ts <runId>
 ```
 
-Computes accuracy, contamination gap, failure-mode counts, calibration buckets, per-class breakdown, and writes them to `runs.aggregates` for that run. Prints the JSON to stdout for inspection.
+Computes accuracy, contamination gap, failure-mode counts, calibration buckets, and per-class breakdown. Writes results to `runs.aggregates`.
 
-You can re-run aggregate any time without side effects (it preserves the kappa value if already set).
-
-### Step 4: hand-grade for kappa
+### Hand-grade for Cohen's kappa
 
 ```bash
-pnpm tsx scripts/sample-for-kappa.ts 2 30
+pnpm tsx scripts/sample-for-kappa.ts <runId> 30
 ```
 
-Produces `kappa-sample-run2.tsv`. Open in Excel/Sheets, fill the `YOUR_*` columns for all 30 rows. Compute Cohen's kappa between `advisor_failure_mode` and `YOUR_failure_mode` (the strict version) — most stats packages have this built in (R: `psych::cohen.kappa`, Python: `sklearn.metrics.cohen_kappa_score`, online calculators if you want quick).
+Produces `kappa-sample-run<N>.tsv`. Open in a spreadsheet, fill the `YOUR_*` columns, compute kappa (R: `psych::cohen.kappa`, Python: `sklearn.metrics.cohen_kappa_score`), then save:
 
-Then save it:
 ```bash
-pnpm tsx scripts/save-kappa.ts 2 0.74
+pnpm tsx scripts/save-kappa.ts <runId> 0.74
 ```
 
-(Replace `0.74` with your actual value.)
-
-### Step 5: mark as primary
-
-When you're happy with the run, promote it to be the dashboard's primary:
+### Promote a run to primary
 
 ```sql
 BEGIN;
 UPDATE runs SET is_primary = FALSE WHERE is_primary = TRUE;
-UPDATE runs SET is_primary = TRUE WHERE id = 2;
+UPDATE runs SET is_primary = TRUE WHERE id = <runId>;
 COMMIT;
 ```
 
-The website (when built) reads `WHERE is_primary = TRUE`.
+The dashboard reads `WHERE is_primary = TRUE`.
 
-## What's locked vs. what's tweakable
+## 🔒 Locked vs. Tweakable
 
-**Don't change without bumping a version string:**
-- `lib/prompts.ts` — system prompts, tool schemas (bump `SOLVER_VERSION` / `ADVISOR_VERSION`)
-- `lib/format-entry.ts` — the entry template (bump `FORMAT_ENTRY_VERSION`)
+**Don't change without bumping a version constant** (the website stamps these onto every run):
 
-These are stamped onto every `runs` row so old runs stay reproducible. The SHA-256 hashes of the prompts are computed automatically and also stored.
+- `lib/prompts.ts` — system prompts, tool schemas → `SOLVER_VERSION` / `ADVISOR_VERSION`
+- `lib/format-entry.ts` — entry template → `FORMAT_ENTRY_VERSION`
 
 **Safe to tweak:**
-- `lib/anthropic.ts` — `MODEL` constant if you want to test other models
-- Aggregation logic in `scripts/aggregate.ts`
-- TSV format in `scripts/sample-for-kappa.ts`
 
-## Notes on resumability
+- `lib/anthropic.ts` — `MODEL` constant (try other models)
+- `scripts/aggregate.ts` — aggregation logic
+- `scripts/sample-for-kappa.ts` — TSV format
 
-A few subtleties worth knowing:
+## 💻 Local Development
 
-- Failed entries (API errors, network blips) are logged but don't halt the run. They just won't have a `results` row, so re-running with `--resume` will retry them.
-- If you Ctrl+C mid-call, the in-flight call is lost but anything already inserted is durable.
-- The `runs.completed_at` timestamp is set only when the runner finishes naturally. A resumed run updates `completed_at` again at the end.
-- If you want to abandon a run entirely, just `DELETE FROM runs WHERE id = <id>` — the foreign key cascade clears the results.
+```bash
+pnpm dev    # Next.js dev server on http://localhost:3000
+pnpm build  # Production build
+pnpm lint   # ESLint
+```
 
-## What the runner does NOT do
+## 🛠️ Tech Stack
 
-- Doesn't filter `necessary_for_fitness` or `unannotated` entries — those are excluded by the WHERE clause in `fetchEntries`. Final eval N is the count of pro_longevity + anti_longevity + unclear (1,385 from your data).
-- Doesn't compute kappa — that's manual, on the TSV sample.
-- Doesn't deploy or build any UI — the runner just produces data the website reads.
+- **Frontend:** Next.js 15 (App Router), React 19, Tailwind CSS
+- **Database:** PostgreSQL via [Neon](https://neon.tech) serverless driver
+- **Eval runtime:** [`@anthropic-ai/sdk`](https://github.com/anthropics/anthropic-sdk-typescript) with Claude Sonnet 4.6
+- **Tooling:** TypeScript, `tsx`, `pnpm`
+
+## 📚 Background
+
+The López-Otín 2023 *Hallmarks of Aging* framework underpins the per-entry analysis. Each prediction is annotated with the relevant aging pathway, surfacing where the model's reasoning aligns with or diverges from biological consensus.
+
+> López-Otín, C., Blasco, M.A., Partridge, L., Serrano, M., & Kroemer, G. (2023). Hallmarks of aging: An expanding universe. *Cell*, 186(2), 243–278.
+
+## 📝 License
+
+MIT © Andrew T. Rodriguez
