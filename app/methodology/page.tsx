@@ -170,6 +170,37 @@ export default async function MethodologyPage() {
         How the eval was designed, run, and validated.
       </p>
 
+      {/* Table of contents */}
+      <nav
+        className="mb-10 rounded-lg p-4"
+        aria-label="Page contents"
+        style={{ backgroundColor: 'var(--color-bg-muted)', border: '0.5px solid var(--color-border)' }}
+      >
+        <p className="text-[11px] font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--color-text-tertiary)' }}>
+          Contents
+        </p>
+        <ol className="space-y-1.5 text-[13px] list-none">
+          {([
+            ['#contamination', 'The contamination problem'],
+            ['#splits', 'The two splits'],
+            ['#solver-advisor', 'Solver and advisor'],
+            ['#hallmarks', 'Mechanism classes: the hallmarks of aging'],
+            ['#pipeline', 'Data pipeline'],
+            ['#ground-truth', 'Ground truth'],
+            ['#advisor-validation', 'Validating the advisor'],
+            ['#related-work', 'Related work'],
+            ['#directional-bias', 'Directional bias and label-inversion failures'],
+            ['#limitations', 'Limitations'],
+            ['#references', 'References'],
+          ] as [string, string][]).map(([href, label], i) => (
+            <li key={href} className="flex gap-2 items-baseline">
+              <span className="text-[12px] tabular-nums w-5 shrink-0 text-right" style={{ color: 'var(--color-text-tertiary)' }}>{i + 1}.</span>
+              <a href={href} className="hover:opacity-70" style={{ color: 'var(--color-primary)' }}>{label}</a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
       {/* 1. The contamination problem */}
       <Section id="contamination">
         <H2>The contamination problem</H2>
@@ -284,8 +315,10 @@ export default async function MethodologyPage() {
       <Section id="hallmarks">
         <H2>Mechanism classes: the hallmarks of aging</H2>
         <P>
-          The solver is asked to assign each gene to a <em>mechanism class</em>, the aging
-          pathway most relevant to that gene&apos;s molecular function. The enum is drawn from
+          The solver is asked to assign each gene to exactly one mechanism class, the aging
+          pathway most relevant to that gene&apos;s molecular function. Many aging genes plausibly
+          participate in multiple hallmarks; the limitation this creates is discussed in the
+          Limitations section. The enum is drawn from
           the López-Otín 2023 framework, which identifies 12 hallmarks of aging plus{' '}
           <em>other</em> (for mechanisms outside the framework) and <em>unclear</em> (when the
           model cannot confidently classify). This controlled vocabulary makes mechanism
@@ -429,13 +462,40 @@ export default async function MethodologyPage() {
         )}
       </Section>
 
-      {/* 8. Directional bias */}
+      {/* 8. Related work */}
+      <Section id="related-work">
+        <H2>Related work</H2>
+        <P>
+          Several groups have applied classical machine learning to the pro/anti-longevity
+          prediction task on GenAge data. Wan, Freitas &amp; de Magalhães (2015) introduced
+          hierarchical feature selection methods that classify model organism genes as pro- or
+          anti-longevity using Gene Ontology features and Naive Bayes / 1-NN classifiers, across
+          the same four model organisms used in this eval. Alsaggaf, Freitas &amp; Wan (2024)
+          extended this line of work with a contrastive learning framework on protein-protein
+          interaction networks, currently the strongest classical-ML result on the task. In an
+          adjacent direction, Kerepesi et al. (2018) used gradient-boosted trees to classify
+          human proteins as aging-related or not, using approximately 21,000 protein features and
+          GenAge labels. Fabris, de Magalhães &amp; Freitas (2017) review the broader area.
+        </P>
+        <P>
+          This eval differs from these prior efforts in three ways. First, it tests a frontier
+          large language model rather than a classical classifier; reasoning traces are generated
+          alongside predictions, which makes failure modes interpretable in a way classical ML
+          cannot. Second, it uses an LLM-as-judge advisor (Zheng et al. 2023) with a fixed
+          failure-mode taxonomy to grade outputs, validated against expert hand-grading via
+          Cohen&apos;s kappa. Third, it includes a blinded counterfactual split as a contamination
+          control, which classical ML does not need because its inputs are structured features
+          rather than free text the model may have encountered during training.
+        </P>
+      </Section>
+
+      {/* 9. Directional bias */}
       <Section id="directional-bias">
         <H2>Directional bias and label-inversion failures</H2>
         <P>
-          The model shows a strong directional bias: pro-longevity recall is 73% but
-          anti-longevity recall is only 30%, despite anti-longevity being the larger class
-          (878 vs. 481 entries). Closer inspection of the misclassifications reveals a specific
+          The model&apos;s predictions are not symmetric across the two main classes. Pro-longevity
+          recall is 73%, but anti-longevity recall is only 30%, despite anti-longevity being the
+          larger class (878 vs. 481 entries in the eligible dataset). Closer inspection of the misclassifications reveals a specific
           failure mode the eval&apos;s seven-class taxonomy doesn&apos;t cleanly capture. The
           model&apos;s reasoning text correctly describes the gene&apos;s role, but the final
           structured prediction inverts the label.
@@ -617,6 +677,60 @@ export default async function MethodologyPage() {
                 for categorical data. <em>Biometrics</em>, <em>33</em>(1), 159–174.
               </p>
             </div>
+          </div>
+
+          <div>
+            <H3>Related work in machine learning on aging biology</H3>
+            <div className="space-y-2">
+              <p id="wan-2015" className="scroll-mt-20">
+                Wan, C., Freitas, A. A., &amp; de Magalhães, J. P. (2015). Predicting the
+                pro-longevity or anti-longevity effect of model organism genes with new
+                hierarchical feature selection methods.{' '}
+                <em>IEEE/ACM Transactions on Computational Biology and Bioinformatics</em>,{' '}
+                <em>12</em>(2), 262–275.{' '}
+                <a href="https://doi.org/10.1109/TCBB.2014.2355218" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-70 break-all" style={{ color: 'var(--color-primary)' }}>
+                  https://doi.org/10.1109/TCBB.2014.2355218
+                </a>
+              </p>
+              <p id="alsaggaf-2024" className="scroll-mt-20">
+                Alsaggaf, I., Freitas, A. A., &amp; Wan, C. (2024). Predicting the pro-longevity
+                or anti-longevity effect of model organism genes with enhanced Gaussian noise
+                augmentation-based contrastive learning on protein-protein interaction networks.{' '}
+                <em>NAR Genomics and Bioinformatics</em>, <em>6</em>(4), lqae153.{' '}
+                <a href="https://doi.org/10.1093/nargab/lqae153" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-70 break-all" style={{ color: 'var(--color-primary)' }}>
+                  https://doi.org/10.1093/nargab/lqae153
+                </a>
+              </p>
+              <p id="kerepesi-2018" className="scroll-mt-20">
+                Kerepesi, C., Daróczy, B., Sturm, Á., Vellai, T., &amp; Benczúr, A. (2018).
+                Prediction and characterization of human ageing-related proteins by using machine
+                learning. <em>Scientific Reports</em>, <em>8</em>, 4094.{' '}
+                <a href="https://doi.org/10.1038/s41598-018-22240-w" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-70 break-all" style={{ color: 'var(--color-primary)' }}>
+                  https://doi.org/10.1038/s41598-018-22240-w
+                </a>
+              </p>
+              <p id="fabris-2017" className="scroll-mt-20">
+                Fabris, F., de Magalhães, J. P., &amp; Freitas, A. A. (2017). A review of
+                supervised machine learning applied to ageing research.{' '}
+                <em>Biogerontology</em>, <em>18</em>(2), 171–188.{' '}
+                <a href="https://doi.org/10.1007/s10522-017-9683-y" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-70 break-all" style={{ color: 'var(--color-primary)' }}>
+                  https://doi.org/10.1007/s10522-017-9683-y
+                </a>
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <H3>LLM evaluation methodology</H3>
+            <p id="zheng-2023" className="scroll-mt-20">
+              Zheng, L., Chiang, W.-L., Sheng, Y., Zhuang, S., Wu, Z., Zhuang, Y., Lin, Z.,
+              Li, Z., Li, D., Xing, E. P., Zhang, H., Gonzalez, J. E., &amp; Stoica, I.
+              (2023). Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena.{' '}
+              <em>NeurIPS 2023 Datasets and Benchmarks Track</em>.{' '}
+              <a href="https://arxiv.org/abs/2306.05685" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-70 break-all" style={{ color: 'var(--color-primary)' }}>
+                https://arxiv.org/abs/2306.05685
+              </a>
+            </p>
           </div>
 
         </div>
