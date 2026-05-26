@@ -318,16 +318,14 @@ export default async function MethodologyPage() {
           The solver is asked to assign each gene to exactly one mechanism class, the aging
           pathway most relevant to that gene&apos;s molecular function. Many aging genes plausibly
           participate in multiple hallmarks; the limitation this creates is discussed in the
-          Limitations section. The enum is drawn from
-          the López-Otín 2023 framework, which identifies 12 hallmarks of aging plus{' '}
+          Limitations section. The enum is drawn from the framework of{' '}
+          <a href="#lopez-otin-2023" className="underline hover:opacity-70" style={{ color: 'var(--color-primary)' }}>
+            López-Otín et al. (2023)
+          </a>
+          , which identifies 12 hallmarks of aging plus{' '}
           <em>other</em> (for mechanisms outside the framework) and <em>unclear</em> (when the
           model cannot confidently classify). This controlled vocabulary makes mechanism
-          predictions comparable across genes and runs.{' '}
-          <cite>
-            <a href="#lopez-otin-2023" className="underline hover:opacity-70" style={{ color: 'var(--color-primary)' }}>
-              (López-Otín et al. 2023)
-            </a>
-          </cite>
+          predictions comparable across genes and runs.
         </P>
         <div className="space-y-5 mt-6">
           {(Object.keys(HALLMARKS) as HallmarkKey[]).map(key => (
@@ -501,7 +499,7 @@ export default async function MethodologyPage() {
           alongside predictions, which makes failure modes interpretable in a way classical ML
           cannot. Second, it uses an LLM-as-judge advisor (
           <a href="#zheng-2023" className="underline hover:opacity-70" style={{ color: 'var(--color-primary)' }}>
-            Zheng et al. 2023
+            Zheng et al. (2023)
           </a>
           ) with a fixed failure-mode taxonomy to grade outputs, validated against expert
           hand-grading via Cohen&apos;s kappa. Third, it includes a blinded counterfactual split
