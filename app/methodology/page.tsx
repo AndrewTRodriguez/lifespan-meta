@@ -318,14 +318,14 @@ export default async function MethodologyPage() {
           The solver is asked to assign each gene to exactly one mechanism class, the aging
           pathway most relevant to that gene&apos;s molecular function. Many aging genes plausibly
           participate in multiple hallmarks; the limitation this creates is discussed in the
-          Limitations section. The enum is drawn from the framework of{' '}
+          Limitations section. The enum is drawn from the 12 hallmarks of aging defined by{' '}
           <a href="#lopez-otin-2023" className="underline hover:opacity-70" style={{ color: 'var(--color-primary)' }}>
             López-Otín et al. (2023)
           </a>
-          , which identifies 12 hallmarks of aging plus{' '}
-          <em>other</em> (for mechanisms outside the framework) and <em>unclear</em> (when the
-          model cannot confidently classify). This controlled vocabulary makes mechanism
-          predictions comparable across genes and runs.
+          , with two additional classes added for this eval: <em>other</em> (for mechanisms
+          outside the framework) and <em>unclear</em> (when the model cannot confidently
+          classify). This controlled vocabulary makes mechanism predictions comparable across
+          genes and runs.
         </P>
         <div className="space-y-5 mt-6">
           {(Object.keys(HALLMARKS) as HallmarkKey[]).map(key => (
