@@ -103,7 +103,7 @@ function EvalDiagram() {
 
 function Section({ id, children }: { id: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="mb-10">
+    <section id={id} className="mb-10 scroll-mt-16">
       {children}
     </section>
   );
@@ -322,7 +322,12 @@ export default async function MethodologyPage() {
           the López-Otín 2023 framework, which identifies 12 hallmarks of aging plus{' '}
           <em>other</em> (for mechanisms outside the framework) and <em>unclear</em> (when the
           model cannot confidently classify). This controlled vocabulary makes mechanism
-          predictions comparable across genes and runs. <cite>(López-Otín et al. 2023)</cite>
+          predictions comparable across genes and runs.{' '}
+          <cite>
+            <a href="#lopez-otin-2023" className="underline hover:opacity-70" style={{ color: 'var(--color-primary)' }}>
+              (López-Otín et al. 2023)
+            </a>
+          </cite>
         </P>
         <div className="space-y-5 mt-6">
           {(Object.keys(HALLMARKS) as HallmarkKey[]).map(key => (
@@ -346,7 +351,7 @@ export default async function MethodologyPage() {
             className="underline hover:opacity-70"
             style={{ color: 'var(--color-primary)' }}
           >
-            <strong>GenAge model organisms database</strong>
+            GenAge model organisms database
           </a>, which catalogs genes with known effects on lifespan across model organisms
           (<em>C. elegans</em>, <em>D. melanogaster</em>, <em>S. cerevisiae</em>, and{' '}
           <em>M. musculus</em>). The CSV was downloaded on{' '}
@@ -362,7 +367,7 @@ export default async function MethodologyPage() {
             className="underline hover:opacity-70"
             style={{ color: 'var(--color-primary)' }}
           >
-            <strong>NCBI Gene via E-utilities</strong>
+            NCBI Gene via E-utilities
           </a>: the official full name, functional descriptors, and{' '}
           <a
             href="http://geneontology.org/docs/ontology-documentation/"
@@ -467,25 +472,41 @@ export default async function MethodologyPage() {
         <H2>Related work</H2>
         <P>
           Several groups have applied classical machine learning to the pro/anti-longevity
-          prediction task on GenAge data. Wan, Freitas &amp; de Magalhães (2015) introduced
-          hierarchical feature selection methods that classify model organism genes as pro- or
-          anti-longevity using Gene Ontology features and Naive Bayes / 1-NN classifiers, across
-          the same four model organisms used in this eval. Alsaggaf, Freitas &amp; Wan (2024)
+          prediction task on GenAge data.{' '}
+          <a href="#wan-2015" className="underline hover:opacity-70" style={{ color: 'var(--color-primary)' }}>
+            Wan, Freitas &amp; de Magalhães (2015)
+          </a>{' '}
+          introduced hierarchical feature selection methods that classify model organism genes as
+          pro- or anti-longevity using Gene Ontology features and Naive Bayes / 1-NN classifiers,
+          across the same four model organisms used in this eval.{' '}
+          <a href="#alsaggaf-2024" className="underline hover:opacity-70" style={{ color: 'var(--color-primary)' }}>
+            Alsaggaf, Freitas &amp; Wan (2024)
+          </a>{' '}
           extended this line of work with a contrastive learning framework on protein-protein
           interaction networks, currently the strongest classical-ML result on the task. In an
-          adjacent direction, Kerepesi et al. (2018) used gradient-boosted trees to classify
-          human proteins as aging-related or not, using approximately 21,000 protein features and
-          GenAge labels. Fabris, de Magalhães &amp; Freitas (2017) review the broader area.
+          adjacent direction,{' '}
+          <a href="#kerepesi-2018" className="underline hover:opacity-70" style={{ color: 'var(--color-primary)' }}>
+            Kerepesi et al. (2018)
+          </a>{' '}
+          used gradient-boosted trees to classify human proteins as aging-related or not, using
+          approximately 21,000 protein features and GenAge labels.{' '}
+          <a href="#fabris-2017" className="underline hover:opacity-70" style={{ color: 'var(--color-primary)' }}>
+            Fabris, de Magalhães &amp; Freitas (2017)
+          </a>{' '}
+          review the broader area.
         </P>
         <P>
           This eval differs from these prior efforts in three ways. First, it tests a frontier
           large language model rather than a classical classifier; reasoning traces are generated
           alongside predictions, which makes failure modes interpretable in a way classical ML
-          cannot. Second, it uses an LLM-as-judge advisor (Zheng et al. 2023) with a fixed
-          failure-mode taxonomy to grade outputs, validated against expert hand-grading via
-          Cohen&apos;s kappa. Third, it includes a blinded counterfactual split as a contamination
-          control, which classical ML does not need because its inputs are structured features
-          rather than free text the model may have encountered during training.
+          cannot. Second, it uses an LLM-as-judge advisor (
+          <a href="#zheng-2023" className="underline hover:opacity-70" style={{ color: 'var(--color-primary)' }}>
+            Zheng et al. 2023
+          </a>
+          ) with a fixed failure-mode taxonomy to grade outputs, validated against expert
+          hand-grading via Cohen&apos;s kappa. Third, it includes a blinded counterfactual split
+          as a contamination control, which classical ML does not need because its inputs are
+          structured features rather than free text the model may have encountered during training.
         </P>
       </Section>
 
@@ -531,7 +552,7 @@ export default async function MethodologyPage() {
       </Section>
 
       {/* 9. Limitations */}
-      <section id="limitations" className="mb-10">
+      <section id="limitations" className="mb-10 scroll-mt-16">
         <h2
           id="limitations"
           className="text-[20px] font-semibold mb-3 mt-0"
