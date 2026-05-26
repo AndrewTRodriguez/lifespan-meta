@@ -207,7 +207,7 @@ export default async function MethodologyPage() {
         <P>
           Large language models are trained on vast amounts of text from the internet, including
           scientific databases, review articles, and curated resources. When a model is asked about
-          a well-characterized gene like <code className="font-mono text-[13px]">daf-2</code>, it
+          a well-characterized gene like <em>daf-2</em>, it
           may answer correctly not because it is reasoning from first principles, but because it
           encountered the answer during training, a form of memorization rather than reasoning.
           This is the contamination problem: the test data may have leaked into the training data,
@@ -525,13 +525,13 @@ export default async function MethodologyPage() {
           Approximately 45 entries (~3% of main-split results) show this pattern. Many are
           textbook anti-longevity genes such as{' '}
           <em>C. elegans</em>{' '}
-          <code className="font-mono text-[13px]">atp-2</code>,{' '}
-          <code className="font-mono text-[13px]">clk-1</code>,{' '}
-          <code className="font-mono text-[13px]">mrpl-1</code>,{' '}
-          <code className="font-mono text-[13px]">eat-2</code>,{' '}
+          <em>atp-2</em>,{' '}
+          <em>clk-1</em>,{' '}
+          <em>mrpl-1</em>,{' '}
+          <em>eat-2</em>,{' '}
           <em>Drosophila</em>{' '}
-          <code className="font-mono text-[13px]">chico</code>, and{' '}
-          mouse <code className="font-mono text-[13px]">Ghrhr</code>. In these cases the model&apos;s
+          <em>chico</em>, and{' '}
+          mouse <em>Ghrhr</em>. In these cases the model&apos;s
           reasoning correctly states that the gene&apos;s normal activity opposes longevity
           (because reducing it extends lifespan), but the prediction field outputs{' '}
           <code className="font-mono text-[13px]">pro_longevity</code>. The advisor&apos;s
@@ -594,10 +594,10 @@ export default async function MethodologyPage() {
             functional annotation, including the gene&apos;s functional descriptor (e.g.,
             &ldquo;Insulin-like receptor subunit beta&rdquo;) and its Gene Ontology Molecular
             Function terms. The gene symbol{' '}
-            <code className="font-mono text-[13px]">daf-2</code> and the protein symbol{' '}
+            <em>daf-2</em> and the protein symbol{' '}
             <code className="font-mono text-[13px]">DAF-2</code> are both blinded, but the
             functional descriptor &ldquo;Insulin-like receptor subunit beta&rdquo; combined with the
-            organism &ldquo;Caenorhabditis elegans&rdquo; uniquely identifies the gene. For
+            organism &ldquo;<em>Caenorhabditis elegans</em>&rdquo; uniquely identifies the gene. For
             well-characterized genes, this means blinding is only partial. The small
             main-vs-counterfactual accuracy gap reflects this limitation more than the
             model&apos;s underlying reasoning capability. A more rigorous future version of this
