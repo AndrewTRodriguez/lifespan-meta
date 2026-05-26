@@ -691,11 +691,17 @@ export default async function MethodologyPage() {
             <div className="space-y-2">
               <p id="cohen-1960" className="scroll-mt-20">
                 Cohen, J. (1960). A coefficient of agreement for nominal scales.{' '}
-                <em>Educational and Psychological Measurement</em>, <em>20</em>(1), 37–46.
+                <em>Educational and Psychological Measurement</em>, <em>20</em>(1), 37–46.{' '}
+                <a href="https://doi.org/10.1177/001316446002000104" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-70 break-all" style={{ color: 'var(--color-primary)' }}>
+                  https://doi.org/10.1177/001316446002000104
+                </a>
               </p>
               <p id="landis-koch-1977" className="scroll-mt-20">
                 Landis, J. R., &amp; Koch, G. G. (1977). The measurement of observer agreement
-                for categorical data. <em>Biometrics</em>, <em>33</em>(1), 159–174.
+                for categorical data. <em>Biometrics</em>, <em>33</em>(1), 159–174.{' '}
+                <a href="https://doi.org/10.2307/2529310" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-70 break-all" style={{ color: 'var(--color-primary)' }}>
+                  https://doi.org/10.2307/2529310
+                </a>
               </p>
             </div>
           </div>
@@ -748,8 +754,8 @@ export default async function MethodologyPage() {
               Li, Z., Li, D., Xing, E. P., Zhang, H., Gonzalez, J. E., &amp; Stoica, I.
               (2023). Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena.{' '}
               <em>NeurIPS 2023 Datasets and Benchmarks Track</em>.{' '}
-              <a href="https://arxiv.org/abs/2306.05685" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-70 break-all" style={{ color: 'var(--color-primary)' }}>
-                https://arxiv.org/abs/2306.05685
+              <a href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/91f18a1287b398d378ef22505bf41832-Abstract-Datasets_and_Benchmarks.html" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-70 break-all" style={{ color: 'var(--color-primary)' }}>
+                https://proceedings.neurips.cc/paper_files/paper/2023/hash/91f18a1287b398d378ef22505bf41832-Abstract-Datasets_and_Benchmarks.html
               </a>
             </p>
           </div>
